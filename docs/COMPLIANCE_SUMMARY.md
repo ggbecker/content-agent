@@ -18,7 +18,7 @@ The MCP server implementation has been thoroughly audited against the Compliance
 
 ## Implementation Compliance
 
-### Rules Discovery (`src/cac_mcp_server/core/discovery/rules.py`)
+### Rules Discovery (`src/content_agent/core/discovery/rules.py`)
 
 ✅ **FULLY COMPLIANT**
 - Uses `yaml.load(..., Loader=yaml.FullLoader)` for rule.yml files
@@ -27,14 +27,14 @@ The MCP server implementation has been thoroughly audited against the Compliance
 - Handles platform field as both string and list
 - Well-documented with reference to COMPLIANCEASCODE_REFERENCE.md
 
-### Products Discovery (`src/cac_mcp_server/core/discovery/products.py`)
+### Products Discovery (`src/content_agent/core/discovery/products.py`)
 
 ✅ **FULLY COMPLIANT**
 - Uses `yaml.safe_load()` for product.yml files (appropriate per ADR-0002)
 - Added comments explaining why safe_load is correct
 - No Jinja2 templates in product.yml files verified
 
-### Validators (`src/cac_mcp_server/core/scaffolding/validators.py`)
+### Validators (`src/content_agent/core/scaffolding/validators.py`)
 
 ✅ **FULLY COMPLIANT**
 - Uses `yaml.safe_load()` for new rule validation (appropriate use case)
@@ -72,8 +72,8 @@ The MCP server implementation has been thoroughly audited against the Compliance
 
 ## Files Modified in Compliance Review
 
-1. `src/cac_mcp_server/core/scaffolding/validators.py` - Enhanced docstring
-2. `src/cac_mcp_server/core/discovery/products.py` - Added clarifying comments (2 locations)
+1. `src/content_agent/core/scaffolding/validators.py` - Enhanced docstring
+2. `src/content_agent/core/discovery/products.py` - Added clarifying comments (2 locations)
 3. `docs/COMPLIANCE_AUDIT.md` - Created comprehensive audit report
 4. `docs/COMPLIANCE_SUMMARY.md` - This summary
 

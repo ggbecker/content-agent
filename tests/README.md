@@ -2,7 +2,7 @@
 
 ## Overview
 
-This directory contains unit and integration tests for the cac-content-mcp-server.
+This directory contains unit and integration tests for the content-agent.
 
 ## Test Structure
 
@@ -53,7 +53,7 @@ pytest tests/integration/
 ### Run with Coverage
 
 ```bash
-pytest --cov=cac_mcp_server --cov-report=html
+pytest --cov=content_agent --cov-report=html
 ```
 
 View coverage report: `open htmlcov/index.html`
@@ -122,7 +122,7 @@ These are marked with `@pytest.mark.skip` by default. To run them:
 
 ```python
 import pytest
-from cac_mcp_server.models import ProductSummary
+from content_agent.models import ProductSummary
 
 def test_product_creation():
     """Test creating a ProductSummary."""
@@ -195,7 +195,7 @@ Available fixtures (see `conftest.py`):
 
 Current coverage:
 ```bash
-pytest --cov=cac_mcp_server --cov-report=term-missing
+pytest --cov=content_agent --cov-report=term-missing
 ```
 
 ## Debugging Failed Tests

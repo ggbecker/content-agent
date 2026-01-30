@@ -33,7 +33,7 @@ class ContentRepository:
 
 ### 2. New Discovery Module: `build_artifacts.py`
 
-Create `src/cac_mcp_server/core/discovery/build_artifacts.py`:
+Create `src/content_agent/core/discovery/build_artifacts.py`:
 
 ```python
 class BuildArtifactsDiscovery:
@@ -57,7 +57,7 @@ class BuildArtifactsDiscovery:
 
 ### 3. New Data Models
 
-Add to `src/cac_mcp_server/models/build.py`:
+Add to `src/content_agent/models/build.py`:
 
 ```python
 @dataclass

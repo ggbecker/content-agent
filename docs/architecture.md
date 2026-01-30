@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `cac-content-mcp-server` is designed as a layered architecture that exposes ComplianceAsCode/content capabilities through the Model Context Protocol (MCP).
+The `content-agent` is designed as a layered architecture that exposes ComplianceAsCode/content capabilities through the Model Context Protocol (MCP).
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -37,7 +37,7 @@ The `cac-content-mcp-server` is designed as a layered architecture that exposes 
 
 ### 1. MCP Protocol Layer
 
-**Location:** `src/cac_mcp_server/server/`
+**Location:** `src/content_agent/server/`
 
 **Responsibility:** Implements MCP protocol and handles client communication.
 
@@ -55,7 +55,7 @@ The `cac-content-mcp-server` is designed as a layered architecture that exposes 
 
 ### 2. Core Business Logic
 
-**Location:** `src/cac_mcp_server/core/`
+**Location:** `src/content_agent/core/`
 
 **Responsibility:** Implements domain logic for content operations.
 
@@ -96,7 +96,7 @@ The `cac-content-mcp-server` is designed as a layered architecture that exposes 
 
 ### 3. Content Repository Integration
 
-**Location:** `src/cac_mcp_server/core/integration/`
+**Location:** `src/content_agent/core/integration/`
 
 **Responsibility:** Manages content repository and SSG module access.
 
@@ -121,7 +121,7 @@ The `cac-content-mcp-server` is designed as a layered architecture that exposes 
 
 ### 4. Data Models
 
-**Location:** `src/cac_mcp_server/models/`
+**Location:** `src/content_agent/models/`
 
 **Responsibility:** Pydantic models for type safety and validation.
 
@@ -139,7 +139,7 @@ The `cac-content-mcp-server` is designed as a layered architecture that exposes 
 
 ### 5. Configuration
 
-**Location:** `src/cac_mcp_server/config/`
+**Location:** `src/content_agent/config/`
 
 **Responsibility:** Configuration management.
 
@@ -154,7 +154,7 @@ The `cac-content-mcp-server` is designed as a layered architecture that exposes 
 
 ### 6. Job Management
 
-**Location:** `src/cac_mcp_server/jobs/` (Phase 2)
+**Location:** `src/content_agent/jobs/` (Phase 2)
 
 **Responsibility:** Async job execution and tracking.
 
@@ -324,7 +324,7 @@ Discovery classes instantiate and return appropriate model objects:
 ```
 Claude Desktop
   ↓ spawns process
-cac-mcp-server (stdio mode)
+content-agent (stdio mode)
   ↓ reads from
 ComplianceAsCode/content repo
 ```
@@ -333,7 +333,7 @@ ComplianceAsCode/content repo
 ```
 Web Client
   ↓ HTTP
-cac-mcp-server (HTTP mode)
+content-agent (HTTP mode)
   ↓ reads from
 ComplianceAsCode/content repo
 ```
@@ -341,7 +341,7 @@ ComplianceAsCode/content repo
 ### Container (Future)
 ```
 Docker container
-  ├─ cac-mcp-server
+  ├─ content-agent
   ├─ content repo (volume mount)
   └─ build tools
 ```

@@ -19,9 +19,9 @@ def example_old_way():
     print("OLD WAY: Multiple Separate Calls")
     print("=" * 70)
 
-    from cac_mcp_server.config import initialize_settings
-    from cac_mcp_server.core.integration import initialize_content_repository
-    from cac_mcp_server.core import discovery
+    from content_agent.config import initialize_settings
+    from content_agent.core.integration import initialize_content_repository
+    from content_agent.core import discovery
 
     # Initialize
     initialize_settings()
@@ -58,9 +58,9 @@ def example_new_way():
     print("NEW WAY: Single Unified Call")
     print("=" * 70)
 
-    from cac_mcp_server.config import initialize_settings
-    from cac_mcp_server.core.integration import initialize_content_repository
-    from cac_mcp_server.core import discovery
+    from content_agent.config import initialize_settings
+    from content_agent.core.integration import initialize_content_repository
+    from content_agent.core import discovery
 
     # Initialize
     initialize_settings()
@@ -99,9 +99,9 @@ def example_with_product_filter():
     print("NEW WAY: With Product Filter")
     print("=" * 70)
 
-    from cac_mcp_server.config import initialize_settings
-    from cac_mcp_server.core.integration import initialize_content_repository
-    from cac_mcp_server.core import discovery
+    from content_agent.config import initialize_settings
+    from content_agent.core.integration import initialize_content_repository
+    from content_agent.core import discovery
 
     # Initialize
     initialize_settings()
@@ -136,9 +136,9 @@ def example_comparison():
     print("BONUS: Source vs Rendered Comparison")
     print("=" * 70)
 
-    from cac_mcp_server.config import initialize_settings
-    from cac_mcp_server.core.integration import initialize_content_repository
-    from cac_mcp_server.core import discovery
+    from content_agent.config import initialize_settings
+    from content_agent.core.integration import initialize_content_repository
+    from content_agent.core import discovery
     import yaml
 
     # Initialize

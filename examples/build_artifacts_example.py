@@ -15,10 +15,10 @@ sys.path.insert(0, str(src_path))
 
 def example_build_artifacts():
     """Example usage of build artifacts feature."""
-    from cac_mcp_server.core.integration import (
+    from content_agent.core.integration import (
         initialize_content_repository,
     )
-    from cac_mcp_server.core import discovery
+    from content_agent.core import discovery
 
     # Initialize content repository
     # Use environment variable or provide path

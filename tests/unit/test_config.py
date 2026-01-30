@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from cac_mcp_server.config.settings import (
+from content_agent.config.settings import (
     BuildSettings,
     ContentSettings,
     Settings,

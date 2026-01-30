@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from cac_mcp_server.server.handlers.resources import handle_resource_read, list_resources
+from content_agent.server.handlers.resources import handle_resource_read, list_resources
 
 
 class TestResourceListing:

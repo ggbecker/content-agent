@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cac-content-mcp-server"
+name = "content-agent"
 version = "0.1.0"
 description = "MCP server for ComplianceAsCode/content project enabling AI-powered security compliance automation"
 readme = "README.md"
@@ -50,19 +50,19 @@ http = [
 ]
 
 [project.scripts]
-cac-mcp-server = "cac_mcp_server.__main__:main"
+content-agent = "content_agent.__main__:main"
 
 [project.urls]
-Homepage = "https://github.com/ComplianceAsCode/cac-content-mcp-server"
-Documentation = "https://github.com/ComplianceAsCode/cac-content-mcp-server/blob/main/README.md"
-Repository = "https://github.com/ComplianceAsCode/cac-content-mcp-server"
-Issues = "https://github.com/ComplianceAsCode/cac-content-mcp-server/issues"
+Homepage = "https://github.com/ComplianceAsCode/content-agent"
+Documentation = "https://github.com/ComplianceAsCode/content-agent/blob/main/README.md"
+Repository = "https://github.com/ComplianceAsCode/content-agent"
+Issues = "https://github.com/ComplianceAsCode/content-agent/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-cac_mcp_server = ["config/defaults.yaml", "prompts/**/*.yaml"]
+content_agent = ["config/defaults.yaml", "prompts/**/*.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -72,7 +72,7 @@ python_functions = ["test_*"]
 addopts = [
     "--strict-markers",
     "--strict-config",
-    "--cov=cac_mcp_server",
+    "--cov=content_agent",
     "--cov-report=term-missing",
 ]
 asyncio_mode = "auto"

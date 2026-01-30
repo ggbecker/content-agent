@@ -18,7 +18,7 @@ The MCP server implementation has been audited against the guidelines in `COMPLI
 **Finding**: The implementation correctly recognizes and handles ComplianceAsCode's custom Jinja2 delimiters.
 
 **Evidence**:
-- `src/cac_mcp_server/core/discovery/rules.py` has proper documentation about `{{{ }}}`, `{{% %}}`, `{{# #}}` syntax
+- `src/content_agent/core/discovery/rules.py` has proper documentation about `{{{ }}}`, `{{% %}}`, `{{# #}}` syntax
 - Module docstring explains the custom delimiters
 - Reference to COMPLIANCEASCODE_REFERENCE.md is present
 
@@ -33,8 +33,8 @@ The MCP server implementation has been audited against the guidelines in `COMPLI
 **Finding**: Rule files (rule.yml) are loaded with the correct YAML loader to handle Jinja2 templates.
 
 **Evidence**:
-- `src/cac_mcp_server/core/discovery/rules.py:116` - Uses `yaml.load(content, Loader=yaml.FullLoader)`
-- `src/cac_mcp_server/core/discovery/rules.py:218` - Uses `yaml.load(content, Loader=yaml.FullLoader)`
+- `src/content_agent/core/discovery/rules.py:116` - Uses `yaml.load(content, Loader=yaml.FullLoader)`
+- `src/content_agent/core/discovery/rules.py:218` - Uses `yaml.load(content, Loader=yaml.FullLoader)`
 
 **Compliance with Reference**:
 > "Use yaml.load(..., Loader=yaml.FullLoader) to handle Jinja2 templates in YAML files"
@@ -50,7 +50,7 @@ The MCP server implementation has been audited against the guidelines in `COMPLI
 **Finding**: Products are correctly extracted from identifiers and references using `@` notation, not from a direct `products:` field.
 
 **Evidence**:
-- `src/cac_mcp_server/core/discovery/rules.py:209-233` - `_extract_products_from_identifiers()` method
+- `src/content_agent/core/discovery/rules.py:209-233` - `_extract_products_from_identifiers()` method
 - Correctly parses `cce@rhel8`, `stigid@rhel9`, etc.
 - Extracts from both `identifiers` and `references` sections
 
@@ -70,8 +70,8 @@ The MCP server implementation has been audited against the guidelines in `COMPLI
 **Finding**: Product YAML files (product.yml) use `yaml.safe_load()`.
 
 **Evidence**:
-- `src/cac_mcp_server/core/discovery/products.py:82` - Uses `yaml.safe_load(f)`
-- `src/cac_mcp_server/core/discovery/products.py:127` - Uses `yaml.safe_load(f)`
+- `src/content_agent/core/discovery/products.py:82` - Uses `yaml.safe_load(f)`
+- `src/content_agent/core/discovery/products.py:127` - Uses `yaml.safe_load(f)`
 
 **Analysis**:
 - Verified that product.yml files in ComplianceAsCode/content do NOT contain Jinja2 templates
@@ -92,7 +92,7 @@ The MCP server implementation has been audited against the guidelines in `COMPLI
 **Finding**: The rule validator uses `yaml.safe_load()` which could be problematic if used on existing rules with Jinja2 templates.
 
 **Evidence**:
-- `src/cac_mcp_server/core/scaffolding/validators.py:52` - Uses `yaml.safe_load(yaml_content)`
+- `src/content_agent/core/scaffolding/validators.py:52` - Uses `yaml.safe_load(yaml_content)`
 
 **Analysis**:
 - Current use case: Validating NEW rules during scaffolding (no Jinja2 templates expected)
@@ -116,7 +116,7 @@ The MCP server implementation has been audited against the guidelines in `COMPLI
 
 **Evidence**:
 ```python
-# src/cac_mcp_server/core/discovery/rules.py:144-146
+# src/content_agent/core/discovery/rules.py:144-146
 platforms = data.get("platform", data.get("platforms", []))
 if isinstance(platforms, str):
     platforms = [platforms]
@@ -136,7 +136,7 @@ if isinstance(platforms, str):
 **Finding**: Profile files use custom parsing, not YAML loading.
 
 **Evidence**:
-- `src/cac_mcp_server/core/discovery/profiles.py:100` - Uses custom `_parse_profile()` method
+- `src/content_agent/core/discovery/profiles.py:100` - Uses custom `_parse_profile()` method
 - Profile files (.profile) have a custom format, not pure YAML
 
 **Analysis**:
@@ -154,7 +154,7 @@ if isinstance(platforms, str):
 **Finding**: Template field correctly uses `Dict[str, Any]` to handle nested dictionaries.
 
 **Evidence**:
-- `src/cac_mcp_server/models/rule.py:104` - `template: Optional[Dict[str, Any]]`
+- `src/content_agent/models/rule.py:104` - `template: Optional[Dict[str, Any]]`
 - Previously was `Dict[str, str]` which caused validation errors
 
 **Compliance with Reference**: ✅ Fixed to handle actual template data structure

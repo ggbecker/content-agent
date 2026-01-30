@@ -1,13 +1,13 @@
 {
   "mcpServers": {
-    "cac-content": {
+    "content-agent": {
       "command": "python",
-      "args": ["-m", "cac_mcp_server"],
+      "args": ["-m", "content_agent"],
       "env": {
-        "CAC_MCP_CONTENT__REPOSITORY": "managed",
-        "CAC_MCP_CONTENT__MANAGED_PATH": "~/.cac-mcp/content",
-        "CAC_MCP_CONTENT__AUTO_UPDATE": "true",
-        "CAC_MCP_LOGGING__LEVEL": "INFO"
+        "CONTENT_AGENT_CONTENT__REPOSITORY": "managed",
+        "CONTENT_AGENT_CONTENT__MANAGED_PATH": "~/.content-agent/content",
+        "CONTENT_AGENT_CONTENT__AUTO_UPDATE": "true",
+        "CONTENT_AGENT_LOGGING__LEVEL": "INFO"
       }
     }
   }

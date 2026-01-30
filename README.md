@@ -1,4 +1,4 @@
-# cac-content-mcp-server
+# content-agent
 
 MCP (Model Context Protocol) server for the ComplianceAsCode/content project, enabling AI assistants like Claude to interact with security compliance automation workflows.
 
@@ -16,7 +16,7 @@ MCP (Model Context Protocol) server for the ComplianceAsCode/content project, en
 ### Installation
 
 ```bash
-pip install cac-content-mcp-server
+pip install content-agent
 ```
 
 ### Claude Desktop Integration
@@ -26,11 +26,11 @@ Add to your `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "cac-content": {
+    "content-agent": {
       "command": "python",
-      "args": ["-m", "cac_mcp_server"],
+      "args": ["-m", "content_agent"],
       "env": {
-        "CAC_MCP_CONTENT__REPOSITORY": "/path/to/content"
+        "CONTENT_AGENT_CONTENT__REPOSITORY": "/path/to/content"
       }
     }
   }
@@ -43,13 +43,13 @@ Restart Claude Desktop and start asking questions about ComplianceAsCode content
 
 ```bash
 # Use existing content repository
-cac-mcp-server --content-repo /path/to/content
+content-agent --content-repo /path/to/content
 
 # Use managed checkout (auto-clones and updates)
-cac-mcp-server --content-repo managed
+content-agent --content-repo managed
 
 # HTTP mode for web integrations
-cac-mcp-server --mode http --port 8080
+content-agent --mode http --port 8080
 ```
 
 ## Configuration
@@ -58,20 +58,20 @@ cac-mcp-server --mode http --port 8080
 
 ```bash
 # Content repository
-CAC_MCP_CONTENT__REPOSITORY=/path/to/content
-CAC_MCP_CONTENT__BRANCH=main
+CONTENT_AGENT_CONTENT__REPOSITORY=/path/to/content
+CONTENT_AGENT_CONTENT__BRANCH=main
 
 # Server mode
-CAC_MCP_SERVER__MODE=stdio  # or http
-CAC_MCP_SERVER__HTTP__PORT=8080
+CONTENT_AGENT_SERVER__MODE=stdio  # or http
+CONTENT_AGENT_SERVER__HTTP__PORT=8080
 
 # Build settings
-CAC_MCP_BUILD__MAX_CONCURRENT_BUILDS=2
-CAC_MCP_BUILD__TIMEOUT=3600
+CONTENT_AGENT_BUILD__MAX_CONCURRENT_BUILDS=2
+CONTENT_AGENT_BUILD__TIMEOUT=3600
 
 # Testing settings
-CAC_MCP_TESTING__BACKEND=podman
-CAC_MCP_TESTING__MAX_CONCURRENT_TESTS=4
+CONTENT_AGENT_TESTING__BACKEND=podman
+CONTENT_AGENT_TESTING__MAX_CONCURRENT_TESTS=4
 ```
 
 ### Configuration File
@@ -95,7 +95,7 @@ testing:
   max_concurrent_tests: 4
 ```
 
-Run with: `cac-mcp-server --config config.yaml`
+Run with: `content-agent --config config.yaml`
 
 ## Available Tools
 
@@ -181,7 +181,7 @@ Claude: "All 5 test scenarios passed!"
 └────────┬────────┘
          │ stdio
 ┌────────▼─────────────────────────┐
-│  cac-content-mcp-server          │
+│  content-agent          │
 │  ┌────────────────────────────┐  │
 │  │ MCP Protocol Layer         │  │
 │  │ - Resources, Tools, Prompts│  │
@@ -204,8 +204,8 @@ Claude: "All 5 test scenarios passed!"
 ### Setup
 
 ```bash
-git clone https://github.com/ComplianceAsCode/cac-content-mcp-server
-cd cac-content-mcp-server
+git clone https://github.com/ComplianceAsCode/content-agent
+cd content-agent
 pip install -e ".[dev]"
 ```
 
@@ -213,7 +213,7 @@ pip install -e ".[dev]"
 
 ```bash
 pytest
-pytest --cov=cac_mcp_server --cov-report=html
+pytest --cov=content_agent --cov-report=html
 ```
 
 ### Code Quality
@@ -258,5 +258,5 @@ Contributions welcome! Please see the ComplianceAsCode/content project for contr
 
 ## Support
 
-- Issues: https://github.com/ComplianceAsCode/cac-content-mcp-server/issues
-- Documentation: https://github.com/ComplianceAsCode/cac-content-mcp-server/blob/main/README.md
+- Issues: https://github.com/ComplianceAsCode/content-agent/issues
+- Documentation: https://github.com/ComplianceAsCode/content-agent/blob/main/README.md

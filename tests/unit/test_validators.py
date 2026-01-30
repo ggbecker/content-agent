@@ -2,7 +2,7 @@
 
 import pytest
 
-from cac_mcp_server.core.scaffolding.validators import RuleValidator, validate_rule_yaml
+from content_agent.core.scaffolding.validators import RuleValidator, validate_rule_yaml
 
 
 class TestRuleValidator:

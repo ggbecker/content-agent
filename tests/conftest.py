@@ -6,8 +6,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from cac_mcp_server.config import initialize_settings
-from cac_mcp_server.core.integration import initialize_content_repository, initialize_ssg_modules
+from content_agent.config import initialize_settings
+from content_agent.core.integration import initialize_content_repository, initialize_ssg_modules
 
 
 @pytest.fixture
@@ -124,15 +124,15 @@ def initialized_content_repo(mock_content_repo, monkeypatch):
     repo = initialize_content_repository(mock_content_repo)
 
     # Mock SSG modules since they won't be available in the test environment
-    import cac_mcp_server.core.integration.ssg_modules as sm
+    import content_agent.core.integration.ssg_modules as sm
     mock_ssg = MagicMock()
     sm._ssg_modules = mock_ssg
 
     yield repo
 
     # Cleanup: Reset the global instances
-    import cac_mcp_server.config.settings as settings_module
-    import cac_mcp_server.core.integration.content_manager as cm
+    import content_agent.config.settings as settings_module
+    import content_agent.core.integration.content_manager as cm
     settings_module._settings = None
     cm._content_repo = None
     sm._ssg_modules = None

@@ -5,7 +5,7 @@ from datetime import datetime
 
 import pytest
 
-from cac_mcp_server.models import (
+from content_agent.models import (
     ProductDetails,
     ProductSummary,
     RuleDetails,

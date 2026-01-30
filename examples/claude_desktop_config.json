@@ -1,11 +1,11 @@
 {
   "mcpServers": {
-    "cac-content": {
+    "content-agent": {
       "command": "python",
-      "args": ["-m", "cac_mcp_server"],
+      "args": ["-m", "content_agent"],
       "env": {
-        "CAC_MCP_CONTENT__REPOSITORY": "/home/user/workspace/content",
-        "CAC_MCP_LOGGING__LEVEL": "INFO"
+        "CONTENT_AGENT_CONTENT__REPOSITORY": "/home/user/workspace/content",
+        "CONTENT_AGENT_LOGGING__LEVEL": "INFO"
       }
     }
   }

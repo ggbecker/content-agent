@@ -8,7 +8,7 @@ import json
 
 import pytest
 
-from cac_mcp_server.server.handlers.tools import handle_tool_call
+from content_agent.server.handlers.tools import handle_tool_call
 
 
 @pytest.mark.skip(reason="Requires actual content repository")
