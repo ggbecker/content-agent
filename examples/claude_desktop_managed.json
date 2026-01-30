@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "cac-content": {
+      "command": "python",
+      "args": ["-m", "cac_mcp_server"],
+      "env": {
+        "CAC_MCP_CONTENT__REPOSITORY": "managed",
+        "CAC_MCP_CONTENT__MANAGED_PATH": "~/.cac-mcp/content",
+        "CAC_MCP_CONTENT__AUTO_UPDATE": "true",
+        "CAC_MCP_LOGGING__LEVEL": "INFO"
+      }
+    }
+  }
+}

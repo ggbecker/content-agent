@@ -1,0 +1,77 @@
+# Default configuration for cac-content-mcp-server
+
+content:
+  # Repository location: "managed" for auto-checkout, or absolute path to existing repo
+  repository: "managed"
+  # Path for managed repository
+  managed_path: "~/.cac-mcp/content"
+  # Branch to checkout/use
+  branch: "master"
+  # Auto-update managed repository
+  auto_update: true
+  # Repository URL for managed checkout
+  repo_url: "https://github.com/ComplianceAsCode/content.git"
+
+server:
+  # Server mode: stdio or http
+  mode: "stdio"
+  # HTTP server settings (only used when mode=http)
+  http:
+    host: "127.0.0.1"
+    port: 8080
+    cors_enabled: false
+    cors_origins: ["*"]
+
+build:
+  # Directory for build artifacts
+  build_dir: "~/.cac-mcp/builds"
+  # Maximum concurrent builds
+  max_concurrent_builds: 2
+  # Build timeout in seconds
+  timeout: 3600
+  # Keep build logs
+  keep_logs: true
+  # Build log retention days
+  log_retention_days: 7
+
+testing:
+  # Backend: podman or docker
+  backend: "podman"
+  # Maximum concurrent test jobs
+  max_concurrent_tests: 4
+  # Test timeout in seconds
+  timeout: 1800
+  # Keep test logs
+  keep_logs: true
+  # Container image selection strategy: auto, latest, or specific version
+  image_strategy: "auto"
+
+jobs:
+  # Job database file
+  database: "~/.cac-mcp/jobs.db"
+  # Thread pool size
+  max_workers: 4
+  # Job history retention in days
+  retention_days: 7
+  # Polling interval for job status (seconds)
+  poll_interval: 1.0
+
+security:
+  # Enable input validation
+  validate_inputs: true
+  # Maximum YAML file size in KB
+  max_yaml_size_kb: 1024
+  # Enable authentication (future)
+  enable_auth: false
+  # Enable audit logging
+  enable_audit: false
+
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR
+  level: "INFO"
+  # Log format
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  # Log to file
+  file: "~/.cac-mcp/server.log"
+  # Console logging
+  console: true

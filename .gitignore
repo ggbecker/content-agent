@@ -1,0 +1,84 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+# Ruff
+.ruff_cache/
+
+# Project specific
+*.log
+*.sqlite
+*.db
+.cac-mcp/
+config.yaml
+local_config.yaml
+
+# Distribution
+*.tar.gz
+*.whl
+
+# Development/temporary documentation and test files
+prd.md
+CHANGELOG_BUILD_ARTIFACTS.md
+BUILD_ARTIFACTS_IMPLEMENTATION.md
+FEATURE_SUMMARY_*.md
+TEST_RESULTS*.md
+CLAUDE_CLI_SETUP.md
+CLAUDE_DESKTOP_SETUP.md
+INSTALL.md
+test_build_artifacts.py
+test_unified_rule_discovery.py
+test_mcp_tools.py
+test_functionality.py

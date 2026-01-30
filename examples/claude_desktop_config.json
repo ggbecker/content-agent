@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "cac-content": {
+      "command": "python",
+      "args": ["-m", "cac_mcp_server"],
+      "env": {
+        "CAC_MCP_CONTENT__REPOSITORY": "/home/user/workspace/content",
+        "CAC_MCP_LOGGING__LEVEL": "INFO"
+      }
+    }
+  }
+}
