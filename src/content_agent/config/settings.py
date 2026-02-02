@@ -112,6 +112,37 @@ class SecuritySettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="CONTENT_AGENT_SECURITY__")
 
 
+class AISettings(BaseSettings):
+    """AI integration settings."""
+
+    claude_api_key: str = Field(
+        default="",
+        description="Claude API key for AI-powered features",
+    )
+    model: str = Field(
+        default="claude-3-5-sonnet-20241022",
+        description="Claude model to use",
+    )
+    max_tokens: int = Field(
+        default=4096,
+        description="Maximum tokens per request",
+        ge=1,
+        le=200000,
+    )
+    temperature: float = Field(
+        default=0.0,
+        description="Temperature for AI generation (0.0 = deterministic)",
+        ge=0.0,
+        le=1.0,
+    )
+    enabled: bool = Field(
+        default=False,
+        description="Enable AI-powered features",
+    )
+
+    model_config = SettingsConfigDict(env_prefix="CONTENT_AGENT_AI__")
+
+
 class LoggingSettings(BaseSettings):
     """Logging settings."""
 
@@ -140,6 +171,7 @@ class Settings(BaseSettings):
     testing: TestingSettings = Field(default_factory=TestingSettings)
     jobs: JobsSettings = Field(default_factory=JobsSettings)
     security: SecuritySettings = Field(default_factory=SecuritySettings)
+    ai: AISettings = Field(default_factory=AISettings)
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
 
     model_config = SettingsConfigDict(env_prefix="CONTENT_AGENT_", env_nested_delimiter="__")

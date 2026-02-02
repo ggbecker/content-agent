@@ -10,6 +10,19 @@ from content_agent.models.build import (
     RenderedRule,
     RenderSearchResult,
 )
+from content_agent.models.control import (
+    ControlFile,
+    ControlGenerationResult,
+    ControlLevel,
+    ControlRequirement,
+    ControlReviewReport,
+    ControlUpdateResult,
+    ControlValidationResult,
+    DocumentSection,
+    ExtractedRequirement,
+    ParsedDocument,
+    RuleSuggestion,
+)
 from content_agent.models.product import ProductDetails, ProductStats, ProductSummary
 from content_agent.models.profile import (
     ProfileDetails,
@@ -46,6 +59,18 @@ __all__ = [
     "DatastreamInfo",
     "RenderedRule",
     "RenderSearchResult",
+    # Control models
+    "ControlFile",
+    "ControlGenerationResult",
+    "ControlLevel",
+    "ControlRequirement",
+    "ControlReviewReport",
+    "ControlUpdateResult",
+    "ControlValidationResult",
+    "DocumentSection",
+    "ExtractedRequirement",
+    "ParsedDocument",
+    "RuleSuggestion",
     # Product models
     "ProductDetails",
     "ProductStats",

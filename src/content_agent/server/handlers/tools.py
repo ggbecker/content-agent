@@ -302,6 +302,159 @@ TOOLS = [
             "required": ["query"],
         },
     },
+    # Control file tools
+    {
+        "name": "parse_policy_document",
+        "description": "Parse security policy document (PDF, Markdown, HTML, or text) and extract requirements with exact text preservation",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "source": {
+                    "type": "string",
+                    "description": "Path to file or URL of policy document",
+                },
+                "document_type": {
+                    "type": "string",
+                    "description": "Document type",
+                    "enum": ["pdf", "markdown", "text", "html"],
+                },
+            },
+            "required": ["source", "document_type"],
+        },
+    },
+    {
+        "name": "generate_control_files",
+        "description": "Generate control file structure from extracted requirements. Creates individual requirement files organized by section.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "policy_id": {
+                    "type": "string",
+                    "description": "Policy identifier",
+                },
+                "policy_title": {
+                    "type": "string",
+                    "description": "Policy title",
+                },
+                "source_document": {
+                    "type": "string",
+                    "description": "Source document path or URL",
+                },
+                "requirements_json": {
+                    "type": "string",
+                    "description": "JSON string of extracted requirements",
+                },
+                "nested_by_section": {
+                    "type": "boolean",
+                    "description": "Whether to nest files by section (default: true)",
+                    "default": True,
+                },
+            },
+            "required": ["policy_id", "policy_title", "requirements_json"],
+        },
+    },
+    {
+        "name": "suggest_rule_mappings",
+        "description": "Get AI-suggested rule mappings for a control requirement (requires Claude API key configured)",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "requirement_text": {
+                    "type": "string",
+                    "description": "Control requirement text",
+                },
+                "requirement_id": {
+                    "type": "string",
+                    "description": "Optional requirement ID",
+                },
+                "max_suggestions": {
+                    "type": "integer",
+                    "description": "Maximum number of suggestions (default: 10)",
+                    "default": 10,
+                },
+                "min_confidence": {
+                    "type": "number",
+                    "description": "Minimum confidence score 0.0-1.0 (default: 0.3)",
+                    "default": 0.3,
+                },
+            },
+            "required": ["requirement_text"],
+        },
+    },
+    {
+        "name": "validate_control_file",
+        "description": "Validate control file YAML syntax, structure, and rule references",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "control_file_path": {
+                    "type": "string",
+                    "description": "Path to control file",
+                },
+            },
+            "required": ["control_file_path"],
+        },
+    },
+    {
+        "name": "review_control_generation",
+        "description": "Review generated control files with validation, text comparison, and AI suggestions",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "control_file_path": {
+                    "type": "string",
+                    "description": "Path to generated control file",
+                },
+                "generate_suggestions": {
+                    "type": "boolean",
+                    "description": "Whether to generate AI rule suggestions (default: true)",
+                    "default": True,
+                },
+            },
+            "required": ["control_file_path"],
+        },
+    },
+    {
+        "name": "list_controls",
+        "description": "List available control frameworks",
+        "inputSchema": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+        },
+    },
+    {
+        "name": "get_control_details",
+        "description": "Get detailed information about a control framework",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "control_id": {
+                    "type": "string",
+                    "description": "Control framework identifier",
+                },
+            },
+            "required": ["control_id"],
+        },
+    },
+    {
+        "name": "search_control_requirements",
+        "description": "Search within control files for specific requirements",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Search query (matches title, description, ID)",
+                },
+                "control_id": {
+                    "type": "string",
+                    "description": "Optional control framework to search within",
+                },
+            },
+            "required": ["query"],
+        },
+    },
 ]
 
 
@@ -481,6 +634,195 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
             results = discovery.search_rendered_content(query, product, limit)
             result = [r.model_dump(mode="json") for r in results]
             summary = f"Found {len(results)} matches in rendered build artifacts.\n\n"
+            return [{"type": "text", "text": summary + json.dumps(result, indent=2)}]
+
+        # Control file tools
+        elif name == "parse_policy_document":
+            from pathlib import Path
+            from content_agent.core.parsing import (
+                PDFParser,
+                MarkdownParser,
+                TextParser,
+                HTMLParser,
+            )
+
+            source = arguments["source"]
+            doc_type = arguments["document_type"]
+
+            # Select parser
+            if doc_type == "pdf":
+                parser = PDFParser()
+            elif doc_type == "markdown":
+                parser = MarkdownParser()
+            elif doc_type == "text":
+                parser = TextParser()
+            elif doc_type == "html":
+                parser = HTMLParser()
+            else:
+                return [{"type": "text", "text": f"Unsupported document type: {doc_type}"}]
+
+            # Parse document
+            parsed = parser.parse(source)
+            result = parsed.model_dump(mode="json")
+            summary = f"Parsed {doc_type} document: {parsed.title}\n"
+            summary += f"Sections: {len(parsed.sections)}\n"
+            summary += f"Source: {parsed.source_path}\n\n"
+
+            return [{"type": "text", "text": summary + json.dumps(result, indent=2)}]
+
+        elif name == "generate_control_files":
+            from pathlib import Path
+            from content_agent.core.scaffolding.control_generator import ControlGenerator
+            from content_agent.models.control import ExtractedRequirement
+
+            policy_id = arguments["policy_id"]
+            policy_title = arguments["policy_title"]
+            requirements_json = arguments["requirements_json"]
+            source_document = arguments.get("source_document")
+            nested = arguments.get("nested_by_section", True)
+
+            # Parse requirements JSON
+            requirements_data = json.loads(requirements_json)
+            requirements = [ExtractedRequirement(**r) for r in requirements_data]
+
+            # Generate control files
+            generator = ControlGenerator()
+            result = generator.generate_control_structure(
+                policy_id=policy_id,
+                policy_title=policy_title,
+                requirements=requirements,
+                nested_by_section=nested,
+            )
+
+            summary = f"Generated control structure for {policy_id}\n"
+            summary += f"Success: {result.success}\n"
+            summary += f"Total requirements: {result.total_requirements}\n"
+            summary += f"Files created: {len(result.requirement_files)}\n"
+            summary += f"Parent file: {result.parent_file_path}\n\n"
+
+            return [{"type": "text", "text": summary + json.dumps(result.model_dump(mode="json"), indent=2)}]
+
+        elif name == "suggest_rule_mappings":
+            from content_agent.config.settings import get_settings
+            from content_agent.core.ai.claude_client import ClaudeClient
+            from content_agent.core.ai.rule_mapper import RuleMapper
+
+            requirement_text = arguments["requirement_text"]
+            max_suggestions = arguments.get("max_suggestions", 10)
+            min_confidence = arguments.get("min_confidence", 0.3)
+
+            # Check AI settings
+            settings = get_settings()
+            if not settings.ai.enabled or not settings.ai.claude_api_key:
+                return [
+                    {
+                        "type": "text",
+                        "text": "AI features not enabled. Set CONTENT_AGENT_AI__ENABLED=true and CONTENT_AGENT_AI__CLAUDE_API_KEY",
+                    }
+                ]
+
+            # Create AI client and mapper
+            client = ClaudeClient(
+                api_key=settings.ai.claude_api_key,
+                model=settings.ai.model,
+                max_tokens=settings.ai.max_tokens,
+                temperature=settings.ai.temperature,
+            )
+            mapper = RuleMapper(client)
+
+            # Get suggestions
+            suggestions = mapper.suggest_rules_for_text(
+                requirement_text=requirement_text,
+                max_suggestions=max_suggestions,
+                min_confidence=min_confidence,
+            )
+
+            result = [s.model_dump(mode="json") for s in suggestions]
+            summary = f"Found {len(suggestions)} rule suggestions\n\n"
+
+            return [{"type": "text", "text": summary + json.dumps(result, indent=2)}]
+
+        elif name == "validate_control_file":
+            from pathlib import Path
+            from content_agent.core.scaffolding.control_validators import (
+                ControlValidator,
+            )
+
+            control_file_path = Path(arguments["control_file_path"])
+            validator = ControlValidator()
+            result = validator.validate_control_file(control_file_path)
+
+            summary = f"Validation: {'PASSED' if result.valid else 'FAILED'}\n"
+            summary += f"Errors: {len(result.errors)}\n"
+            summary += f"Warnings: {len(result.warnings)}\n\n"
+
+            return [{"type": "text", "text": summary + json.dumps(result.model_dump(mode="json"), indent=2)}]
+
+        elif name == "review_control_generation":
+            from pathlib import Path
+            from content_agent.config.settings import get_settings
+            from content_agent.core.ai.claude_client import ClaudeClient
+            from content_agent.core.ai.rule_mapper import RuleMapper
+            from content_agent.core.review.mapping_reviewer import MappingReviewer
+
+            control_file_path = Path(arguments["control_file_path"])
+            generate_suggestions = arguments.get("generate_suggestions", True)
+
+            # Setup reviewer
+            reviewer_kwargs = {}
+            if generate_suggestions:
+                settings = get_settings()
+                if settings.ai.enabled and settings.ai.claude_api_key:
+                    client = ClaudeClient(
+                        api_key=settings.ai.claude_api_key,
+                        model=settings.ai.model,
+                        max_tokens=settings.ai.max_tokens,
+                        temperature=settings.ai.temperature,
+                    )
+                    mapper = RuleMapper(client)
+                    reviewer_kwargs["rule_mapper"] = mapper
+
+            reviewer = MappingReviewer(**reviewer_kwargs)
+            report = reviewer.review_control_file(
+                control_file_path=control_file_path,
+                generate_suggestions=generate_suggestions,
+            )
+
+            # Format report
+            formatted = reviewer.format_review_report(report)
+
+            return [{"type": "text", "text": formatted}]
+
+        elif name == "list_controls":
+            controls = discovery.list_controls()
+            summary = f"Found {len(controls)} control frameworks\n\n"
+            result = {"controls": controls, "count": len(controls)}
+            return [{"type": "text", "text": summary + json.dumps(result, indent=2)}]
+
+        elif name == "get_control_details":
+            from content_agent.core.discovery.controls import get_control_details
+
+            control_id = arguments["control_id"]
+            control = get_control_details(control_id)
+
+            if not control:
+                return [{"type": "text", "text": f"Control not found: {control_id}"}]
+
+            summary = f"Control framework: {control.title}\n"
+            summary += f"Requirements: {len(control.controls)}\n\n"
+
+            return [{"type": "text", "text": summary + json.dumps(control.model_dump(mode="json"), indent=2)}]
+
+        elif name == "search_control_requirements":
+            from content_agent.core.discovery.controls import search_controls
+
+            query = arguments["query"]
+            control_id = arguments.get("control_id")
+
+            requirements = search_controls(query=query, control_id=control_id)
+            result = [r.model_dump(mode="json") for r in requirements]
+            summary = f"Found {len(requirements)} matching requirements\n\n"
+
             return [{"type": "text", "text": summary + json.dumps(result, indent=2)}]
 
         else:

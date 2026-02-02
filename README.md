@@ -12,6 +12,12 @@ MCP (Model Context Protocol) server for the ComplianceAsCode/content project, en
 - **Content Discovery**: Search and explore rules, profiles, products, and templates
 - **Build Artifacts**: Access rendered content from build directories (post-Jinja processing)
 - **Rule Scaffolding**: Generate rule boilerplate with validation
+- **Control File Generation**: Create control files from security policy documents (NEW)
+  - Parse PDF, Markdown, HTML, and text policy documents
+  - Extract requirements with exact text preservation
+  - AI-powered rule mapping suggestions (requires Claude API key)
+  - Automatic file structure generation organized by section
+  - Validation and review tools
 - **Build Integration**: Trigger and monitor product/rule builds
 - **Test Automation**: Execute and track Automatus test runs
 - **Dual Transport**: stdio (Claude Desktop) and HTTP modes
@@ -197,6 +203,13 @@ CONTENT_AGENT_BUILD__TIMEOUT=3600
 # Testing settings
 CONTENT_AGENT_TESTING__BACKEND=podman
 CONTENT_AGENT_TESTING__MAX_CONCURRENT_TESTS=4
+
+# AI settings (for control file generation features)
+CONTENT_AGENT_AI__ENABLED=true
+CONTENT_AGENT_AI__CLAUDE_API_KEY=your_api_key_here
+CONTENT_AGENT_AI__MODEL=claude-3-5-sonnet-20241022
+CONTENT_AGENT_AI__MAX_TOKENS=4096
+CONTENT_AGENT_AI__TEMPERATURE=0.0
 ```
 
 ### Configuration File
@@ -218,6 +231,13 @@ build:
 testing:
   backend: podman
   max_concurrent_tests: 4
+
+ai:
+  enabled: true
+  claude_api_key: your_api_key_here
+  model: claude-3-5-sonnet-20241022
+  max_tokens: 4096
+  temperature: 0.0
 ```
 
 Run with: `content-agent --config config.yaml`
@@ -246,6 +266,17 @@ Run with: `content-agent --config config.yaml`
 - `generate_rule_from_template` - Generate rule using template
 - `validate_rule_yaml` - Validate rule.yml structure
 - `generate_profile_boilerplate` - Generate profile structure
+
+### Control Files
+
+- `parse_policy_document` - Parse security policy documents (PDF, Markdown, HTML, text)
+- `generate_control_files` - Generate control file structure from requirements
+- `suggest_rule_mappings` - Get AI-suggested rule mappings (requires API key)
+- `validate_control_file` - Validate control file syntax and structure
+- `review_control_generation` - Review generated controls with validation and suggestions
+- `list_controls` - List available control frameworks
+- `get_control_details` - Get control framework details
+- `search_control_requirements` - Search within control requirements
 
 ### Build
 
@@ -298,6 +329,37 @@ Claude: [polls get_test_results(job_id="test_456")]
 Claude: "All 5 test scenarios passed!"
 ```
 
+### Create Control Files from Policy Document
+
+```
+User: "Parse this NIST 800-53 PDF and create control files"
+Claude: [calls parse_policy_document(source="/path/to/nist_800_53.pdf", document_type="pdf")]
+Claude: "Parsed document with 324 requirements across 18 sections..."
+
+User: "Generate control files for these requirements"
+Claude: [calls generate_control_files(policy_id="nist_800_53", ...)]
+Claude: "Created control structure:
+  - Parent file: controls/nist_800_53.yml
+  - 324 requirement files in 18 sections
+  - Files organized: controls/nist_800_53/access_control/ac_001.yml, ..."
+
+User: "Suggest rule mappings for the password requirements"
+Claude: [calls suggest_rule_mappings(requirement_text="Organizations must enforce password complexity...")]
+Claude: "Found 5 relevant rules:
+  1. accounts_password_minlen_login_defs (85% confidence)
+  2. accounts_password_pam_minlen (82% confidence)
+  ..."
+
+User: "Review the generated control files"
+Claude: [calls review_control_generation(control_file_path="controls/nist_800_53.yml")]
+Claude: "Review Report:
+  - Total requirements: 324
+  - Requirements with rules: 156 (48%)
+  - Requirements without rules: 168
+  - Validation: PASSED
+  - Suggested mappings available for 142 unmapped requirements"
+```
+
 ## Architecture
 
 ```
@@ -315,6 +377,7 @@ Claude: "All 5 test scenarios passed!"
 │  │ Core Business Logic        │  │
 │  │ - Discovery, Scaffolding   │  │
 │  │ - Build, Testing           │  │
+│  │ - Control File Generation  │  │
 │  └────────────────────────────┘  │
 └────────┬─────────────────────────┘
          │
@@ -323,6 +386,127 @@ Claude: "All 5 test scenarios passed!"
 │ - SSG modules, Build, Tests      │
 └──────────────────────────────────┘
 ```
+
+## Control File Generation
+
+The control file generation feature enables creating ComplianceAsCode control files from security policy documents.
+
+### Workflow
+
+1. **Parse Policy Document**
+   - Supports PDF, Markdown, HTML, and plain text formats
+   - Extracts document structure (sections, headings)
+   - Preserves exact text (no AI rewording at this stage)
+
+2. **Extract Requirements** (Optional, with Claude API)
+   - AI analyzes document to identify security requirements
+   - Extracts requirement text with exact wording preserved
+   - Associates requirements with their sections
+
+3. **Generate Control Files**
+   - Creates individual YAML files per requirement
+   - Organizes files by section: `controls/<policy_id>/<section>/<req>.yml`
+   - Generates parent file with includes: `controls/<policy_id>.yml`
+
+4. **AI Rule Mapping** (Optional, with Claude API)
+   - Suggests ComplianceAsCode rules for each requirement
+   - Provides confidence scores and reasoning
+   - Classifies match types (exact_ref, keyword, semantic, description)
+
+5. **Validation and Review**
+   - Validates YAML syntax and structure
+   - Checks rule references exist
+   - Compares extracted vs. original text
+   - Reports coverage statistics
+
+### File Structure
+
+Generated control files follow this structure:
+
+```
+controls/
+├── my_policy.yml                 # Parent control file
+└── my_policy/                    # Policy directory
+    ├── access_control/           # Section directory
+    │   ├── ac_001.yml           # Individual requirements
+    │   ├── ac_002.yml
+    │   └── ac_003.yml
+    └── authentication/
+        ├── au_001.yml
+        └── au_002.yml
+```
+
+**Parent file** (`controls/my_policy.yml`):
+```yaml
+id: my_policy
+title: My Security Policy
+description: Policy description
+source_document: /path/to/policy.pdf
+includes:
+  - access_control/ac_001.yml
+  - access_control/ac_002.yml
+  - authentication/au_001.yml
+```
+
+**Requirement file** (`controls/my_policy/access_control/ac_001.yml`):
+```yaml
+id: AC-1
+title: Access Control Policy and Procedures
+description: |
+  The organization develops, documents, and disseminates...
+  (exact text from source document)
+status: automated
+rules:
+  - file_permissions_etc_passwd
+  - file_ownership_etc_group
+related_rules:
+  - accounts_password_minlen_login_defs
+references:
+  nist:
+    - AC-1
+notes: Implementation notes here
+```
+
+### AI Configuration
+
+To use AI-powered features (requirement extraction and rule mapping), configure Claude API access:
+
+**Via environment variables:**
+```bash
+export CONTENT_AGENT_AI__ENABLED=true
+export CONTENT_AGENT_AI__CLAUDE_API_KEY=sk-ant-...
+```
+
+**Via Claude Desktop config:**
+```json
+{
+  "mcpServers": {
+    "content-agent": {
+      "command": "python",
+      "args": ["-m", "content_agent"],
+      "env": {
+        "CONTENT_AGENT_CONTENT__REPOSITORY": "/path/to/content",
+        "CONTENT_AGENT_AI__ENABLED": "true",
+        "CONTENT_AGENT_AI__CLAUDE_API_KEY": "sk-ant-..."
+      }
+    }
+  }
+}
+```
+
+**Note:** AI features are optional. You can still parse documents and generate control files manually without an API key.
+
+### Best Practices
+
+1. **Text Preservation**: The system preserves exact text from source documents. Always review extracted requirements for accuracy.
+
+2. **Section Organization**: Organize requirements by logical sections matching your policy document structure.
+
+3. **Rule Mapping**: AI suggestions are starting points. Review confidence scores and reasoning before accepting mappings.
+
+4. **Validation**: Always run validation after generating control files to catch structural issues early.
+
+5. **Incremental Updates**: You can update existing control files by adding new requirements while preserving existing mappings.
 
 ## Development
 
