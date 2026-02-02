@@ -61,6 +61,7 @@ dmypy.json
 *.log
 *.sqlite
 *.db
+.content-agent/
 .cac-mcp/
 config.yaml
 local_config.yaml
