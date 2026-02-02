@@ -1,7 +1,7 @@
 # content-agent
 
-[![CI](https://github.com/ComplianceAsCode/content-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/ComplianceAsCode/content-agent/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/ComplianceAsCode/content-agent/branch/main/graph/badge.svg)](https://codecov.io/gh/ComplianceAsCode/content-agent)
+[![CI](https://github.com/ggbecker/content-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/ggbecker/content-agent/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/ggbecker/content-agent/branch/main/graph/badge.svg)](https://codecov.io/gh/ggbecker/content-agent)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
@@ -18,15 +18,42 @@ MCP (Model Context Protocol) server for the ComplianceAsCode/content project, en
 
 ## Quick Start
 
-### Installation
+### Prerequisites
 
-```bash
-pip install content-agent
-```
+1. **Python 3.11+** installed
+2. **ComplianceAsCode/content repository** - Clone it first:
+   ```bash
+   git clone https://github.com/ComplianceAsCode/content.git ~/workspace/content
+   ```
+
+### Installation (Local Development)
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/ggbecker/content-agent.git
+   cd content-agent
+   ```
+
+2. Install in development mode:
+   ```bash
+   pip install -e ".[dev]"
+   ```
+
+3. Verify installation:
+   ```bash
+   content-agent --help
+   ```
 
 ### Claude Desktop Integration
 
-Add to your `claude_desktop_config.json`:
+#### Option 1: Using Your Existing ComplianceAsCode/content Repository
+
+Add this to your Claude Desktop config file (`claude_desktop_config.json`):
+
+**Location of config file:**
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Linux**: `~/.config/Claude/claude_desktop_config.json`
 
 ```json
 {
@@ -35,27 +62,120 @@ Add to your `claude_desktop_config.json`:
       "command": "python",
       "args": ["-m", "content_agent"],
       "env": {
-        "CONTENT_AGENT_CONTENT__REPOSITORY": "/path/to/content"
+        "CONTENT_AGENT_CONTENT__REPOSITORY": "/home/user/workspace/content"
       }
     }
   }
 }
 ```
 
-Restart Claude Desktop and start asking questions about ComplianceAsCode content!
+Replace `/home/user/workspace/content` with the actual path to your ComplianceAsCode/content repository.
 
-### Standalone Usage
+#### Option 2: Let content-agent Manage the Repository
+
+content-agent can automatically clone and manage the ComplianceAsCode/content repository:
+
+```json
+{
+  "mcpServers": {
+    "content-agent": {
+      "command": "python",
+      "args": ["-m", "content_agent"],
+      "env": {
+        "CONTENT_AGENT_CONTENT__REPOSITORY": "managed",
+        "CONTENT_AGENT_CONTENT__MANAGED_PATH": "~/.content-agent/content"
+      }
+    }
+  }
+}
+```
+
+**After adding the configuration:**
+1. Restart Claude Desktop completely (quit and reopen)
+2. Look for a hammer icon (🔨) in the bottom right - this indicates MCP servers are loaded
+3. Start asking questions like "What products are available?" or "Search for SSH rules"
+
+### Standalone Usage (CLI)
+
+Run the MCP server directly from command line:
 
 ```bash
 # Use existing content repository
-content-agent --content-repo /path/to/content
+content-agent --content-repo ~/workspace/content
 
-# Use managed checkout (auto-clones and updates)
+# Use managed checkout (auto-clones to ~/.content-agent/content)
 content-agent --content-repo managed
 
-# HTTP mode for web integrations
-content-agent --mode http --port 8080
+# With custom configuration file
+content-agent --config config.yaml
+
+# Debug mode with detailed logging
+content-agent --content-repo ~/workspace/content --log-level DEBUG
 ```
+
+**Note:** The standalone mode runs the MCP server in stdio mode, which expects MCP protocol messages. For interactive use, integrate with Claude Desktop instead.
+
+### Troubleshooting
+
+#### Claude Desktop Not Showing MCP Tools
+
+1. **Check config file location:**
+   - Make sure you edited the correct `claude_desktop_config.json` file
+   - Verify the JSON is valid (use a JSON validator)
+
+2. **Check Claude Desktop logs:**
+   - **macOS**: `~/Library/Logs/Claude/mcp*.log`
+   - **Windows**: `%APPDATA%\Claude\logs\mcp*.log`
+   - **Linux**: `~/.config/Claude/logs/mcp*.log`
+
+3. **Verify content-agent is installed:**
+   ```bash
+   which content-agent
+   python -m content_agent --help
+   ```
+
+4. **Test manually:**
+   ```bash
+   content-agent --content-repo ~/workspace/content --log-level DEBUG
+   ```
+   You should see initialization messages. Press Ctrl+C to exit.
+
+#### MCP Server Fails to Start
+
+**Error: "Content repository not found"**
+- Verify the path in `CONTENT_AGENT_CONTENT__REPOSITORY` exists
+- Use absolute paths, not relative paths
+- Ensure you have read permissions
+
+**Error: "SSG modules not found"**
+- Make sure the content repository is complete (has `ssg/` directory)
+- Try using a fresh clone of ComplianceAsCode/content
+
+**Error: "Permission denied"**
+- Check that Python and content-agent are executable
+- Verify file permissions on the content repository
+
+#### Enable Debug Logging
+
+Add debug logging to your Claude Desktop config:
+
+```json
+{
+  "mcpServers": {
+    "content-agent": {
+      "command": "python",
+      "args": ["-m", "content_agent"],
+      "env": {
+        "CONTENT_AGENT_CONTENT__REPOSITORY": "/home/user/workspace/content",
+        "CONTENT_AGENT_LOGGING__LEVEL": "DEBUG",
+        "CONTENT_AGENT_LOGGING__FILE": "/tmp/content-agent.log"
+      }
+    }
+  }
+}
+```
+
+Then check `/tmp/content-agent.log` for detailed error messages.
 
 ## Configuration
 
@@ -206,27 +326,76 @@ Claude: "All 5 test scenarios passed!"
 
 ## Development
 
-### Setup
+### Development Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/ggbecker/content-agent.git
+   cd content-agent
+   ```
+
+2. **Install development dependencies:**
+   ```bash
+   pip install -e ".[dev]"
+   ```
+
+3. **Clone the ComplianceAsCode/content repository:**
+   ```bash
+   git clone https://github.com/ComplianceAsCode/content.git ~/workspace/content
+   ```
+
+4. **Test your local installation:**
+   ```bash
+   # Run with local content repo
+   content-agent --content-repo ~/workspace/content --log-level DEBUG
+   ```
+
+### Running Tests
 
 ```bash
-git clone https://github.com/ComplianceAsCode/content-agent
-cd content-agent
-pip install -e ".[dev]"
-```
-
-### Run Tests
-
-```bash
+# Run all tests
 pytest
+
+# Run with coverage
 pytest --cov=content_agent --cov-report=html
+
+# Run specific test file
+pytest tests/unit/test_config.py -v
+
+# Run integration tests (requires content repo)
+pytest tests/integration/ -v
 ```
 
 ### Code Quality
 
 ```bash
+# Format code
 black src/ tests/
+
+# Lint code
 ruff check src/ tests/
+
+# Type checking
 mypy src/
+```
+
+### Project Structure
+
+```
+content-agent/
+├── src/content_agent/       # Main source code
+│   ├── config/              # Configuration management
+│   ├── core/                # Core functionality
+│   │   ├── discovery/       # Content discovery (rules, products, etc.)
+│   │   ├── integration/     # ComplianceAsCode integration
+│   │   └── scaffolding/     # Code generation
+│   ├── models/              # Pydantic data models
+│   └── server/              # MCP server implementation
+├── tests/                   # Test suite
+│   ├── unit/                # Unit tests
+│   └── integration/         # Integration tests
+├── examples/                # Example configurations
+└── docs/                    # Documentation
 ```
 
 ## Requirements
@@ -263,5 +432,6 @@ Contributions welcome! Please see the ComplianceAsCode/content project for contr
 
 ## Support
 
-- Issues: https://github.com/ComplianceAsCode/content-agent/issues
-- Documentation: https://github.com/ComplianceAsCode/content-agent/blob/main/README.md
+- **Issues**: https://github.com/ggbecker/content-agent/issues
+- **Documentation**: https://github.com/ggbecker/content-agent/blob/main/README.md
+- **ComplianceAsCode/content**: https://github.com/ComplianceAsCode/content
