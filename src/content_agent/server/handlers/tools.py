@@ -342,7 +342,7 @@ TOOLS = [
                 },
                 "requirements_json": {
                     "type": "string",
-                    "description": "JSON string of extracted requirements",
+                    "description": "JSON string of extracted requirements. Format: {\"requirements\": [{\"id\": \"...\", \"title\": \"...\", \"description\": \"...\", \"section\": \"...\"}]} or just the array",
                 },
                 "nested_by_section": {
                     "type": "boolean",
@@ -683,7 +683,30 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
 
             # Parse requirements JSON
             requirements_data = json.loads(requirements_json)
-            requirements = [ExtractedRequirement(**r) for r in requirements_data]
+
+            # Handle both wrapped and unwrapped formats
+            if isinstance(requirements_data, dict) and "requirements" in requirements_data:
+                reqs_list = requirements_data["requirements"]
+            elif isinstance(requirements_data, list):
+                reqs_list = requirements_data
+            else:
+                return [{"type": "text", "text": "Invalid requirements format. Expected list or object with 'requirements' key."}]
+
+            # Map fields to ExtractedRequirement format
+            requirements = []
+            for r in reqs_list:
+                # Map fields: description->text, id->potential_id, section->section_title
+                section_title = r.get("section", "default")
+                section_id = section_title.lower().replace(" ", "_").replace(":", "").replace("&", "and")
+
+                req = ExtractedRequirement(
+                    text=r.get("description", r.get("text", "")),
+                    section_id=section_id,
+                    section_title=section_title,
+                    potential_id=r.get("id", r.get("potential_id")),
+                    context=r.get("title")  # Store title in context if provided
+                )
+                requirements.append(req)
 
             # Generate control files
             generator = ControlGenerator()
@@ -692,6 +715,7 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
                 policy_title=policy_title,
                 requirements=requirements,
                 nested_by_section=nested,
+                source_document=source_document,
             )
 
             summary = f"Generated control structure for {policy_id}\n"
