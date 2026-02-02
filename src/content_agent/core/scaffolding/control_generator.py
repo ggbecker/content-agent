@@ -46,15 +46,15 @@ class ControlGenerator:
         policy_title: str,
         requirements: list[ExtractedRequirement],
         output_dir: Path | None = None,
-        nested_by_section: bool = True,
+        nested_by_section: bool = False,  # Deprecated, kept for compatibility
         source_document: str | None = None,
         description: str | None = None,
     ) -> ControlGenerationResult:
         """Generate control file structure with individual requirement files.
 
-        Creates:
-        - controls/<policy_id>/section1/req1.yml
-        - controls/<policy_id>/section1/req2.yml
+        Creates flat structure as required by ComplianceAsCode:
+        - controls/<policy_id>/req1.yml
+        - controls/<policy_id>/req2.yml
         - controls/<policy_id>.yml (parent with includes)
 
         Args:
@@ -62,7 +62,9 @@ class ControlGenerator:
             policy_title: Policy title
             requirements: List of extracted requirements
             output_dir: Optional output directory (defaults to controls/)
-            nested_by_section: Whether to nest files by section
+            nested_by_section: Deprecated, always uses flat structure
+            source_document: Source document path or URL
+            description: Optional policy description
 
         Returns:
             ControlGenerationResult with file paths and status
@@ -94,44 +96,25 @@ class ControlGenerator:
                     warnings=[],
                 )
 
-            # Create directory structure
+            # Create flat directory structure
             policy_dir.mkdir(parents=True, exist_ok=True)
 
             # Convert ExtractedRequirement to ControlRequirement
             control_requirements = self._convert_to_control_requirements(requirements)
 
-            # Group by section if nested
-            if nested_by_section:
-                sections = self._group_by_section(control_requirements)
-            else:
-                sections = {"default": control_requirements}
-
-            # Generate individual requirement files
+            # Generate individual requirement files (flat structure)
             requirement_files = []
-            created_sections = []
 
-            for section_id, section_reqs in sections.items():
-                if nested_by_section and section_id != "default":
-                    section_dir = policy_dir / section_id
-                    section_dir.mkdir(parents=True, exist_ok=True)
-                    created_sections.append(section_id)
-                else:
-                    section_dir = policy_dir
+            for idx, req in enumerate(control_requirements, 1):
+                # Generate filename from requirement ID or index
+                filename = self._generate_filename(req, idx)
+                file_path = policy_dir / filename
 
-                for idx, req in enumerate(section_reqs, 1):
-                    # Generate filename from requirement ID or index
-                    filename = self._generate_filename(req, idx)
-                    file_path = section_dir / filename
-
-                    # Generate requirement file
-                    success = self.generate_requirement_file(req, file_path)
-                    if success:
-                        # Store relative path from policy_dir
-                        if nested_by_section and section_id != "default":
-                            rel_path = f"{section_id}/{filename}"
-                        else:
-                            rel_path = filename
-                        requirement_files.append(rel_path)
+                # Generate requirement file
+                success = self.generate_requirement_file(req, file_path)
+                if success:
+                    # Store relative path from policy_dir (just filename for flat structure)
+                    requirement_files.append(filename)
 
             # Generate parent control file
             parent_success = self.generate_parent_control_file(
@@ -149,14 +132,14 @@ class ControlGenerator:
                     parent_file_path=parent_file_path,
                     requirement_files=[policy_dir / f for f in requirement_files],
                     total_requirements=len(control_requirements),
-                    sections=created_sections,
+                    sections=[],
                     success=False,
                     errors=["Failed to generate parent control file"],
                     warnings=[],
                 )
 
             logger.info(
-                f"Created control structure with {len(requirement_files)} requirements"
+                f"Created flat control structure with {len(requirement_files)} requirements"
             )
 
             return ControlGenerationResult(
@@ -164,7 +147,7 @@ class ControlGenerator:
                 parent_file_path=parent_file_path,
                 requirement_files=[policy_dir / f for f in requirement_files],
                 total_requirements=len(control_requirements),
-                sections=created_sections,
+                sections=[],  # No sections in flat structure
                 success=True,
                 errors=[],
                 warnings=[],
@@ -262,10 +245,13 @@ class ControlGenerator:
     ) -> bool:
         """Generate parent control file with includes.
 
+        Generates a parent control file that includes all individual requirement
+        files using flat structure (no subdirectories).
+
         Args:
             policy_id: Policy identifier
             policy_title: Policy title
-            requirement_files: List of relative paths to requirement files
+            requirement_files: List of requirement filenames (flat structure)
             output_path: Path to write parent file
             description: Optional policy description
             source_document: Optional source document path/URL

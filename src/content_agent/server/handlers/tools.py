@@ -324,7 +324,7 @@ TOOLS = [
     },
     {
         "name": "generate_control_files",
-        "description": "Generate control file structure from extracted requirements. Creates individual requirement files organized by section.",
+        "description": "Generate control file structure from extracted requirements. Creates individual requirement files in a flat directory structure (ComplianceAsCode format).",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -346,8 +346,8 @@ TOOLS = [
                 },
                 "nested_by_section": {
                     "type": "boolean",
-                    "description": "Whether to nest files by section (default: true)",
-                    "default": True,
+                    "description": "Deprecated - always uses flat structure as required by ComplianceAsCode",
+                    "default": False,
                 },
             },
             "required": ["policy_id", "policy_title", "requirements_json"],
@@ -679,7 +679,7 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
             policy_title = arguments["policy_title"]
             requirements_json = arguments["requirements_json"]
             source_document = arguments.get("source_document")
-            nested = arguments.get("nested_by_section", True)
+            nested = arguments.get("nested_by_section", False)  # Always flat structure
 
             # Parse requirements JSON
             requirements_data = json.loads(requirements_json)

@@ -116,14 +116,13 @@ class TestITSARWorkflow:
                 ),
             ]
 
-            # Generate control structure
+            # Generate control structure (flat)
             generator = ControlGenerator.__new__(ControlGenerator)
             result = generator.generate_control_structure(
                 policy_id="itsar_os",
                 policy_title="ITSAR Operating System Requirements",
                 requirements=requirements,
                 output_dir=output_dir,
-                nested_by_section=True,
                 source_document="ITSAR701012411.pdf",
             )
 
@@ -290,14 +289,13 @@ class TestControlWorkflowWithoutAI:
                 ),
             ]
 
-            # Step 3: Generate control files
+            # Step 3: Generate control files (flat structure)
             generator = ControlGenerator.__new__(ControlGenerator)
             result = generator.generate_control_structure(
                 policy_id="itsar_os_security",
                 policy_title="ITSAR Operating System Security Requirements",
                 requirements=requirements,
                 output_dir=output_dir,
-                nested_by_section=True,
                 source_document=str(ITSAR_PDF),
             )
 
@@ -312,16 +310,12 @@ class TestControlWorkflowWithoutAI:
             validation = validator.validate_control_file(result.parent_file_path)
             assert validation.valid or len(validation.errors) == 0
 
-            # Step 5: Verify file structure
+            # Step 5: Verify flat file structure (no subdirectories)
             policy_dir = output_dir / "itsar_os_security"
             assert policy_dir.exists()
 
-            # Should have section directory
-            section_dir = policy_dir / "security_features"
-            assert section_dir.exists()
-
-            # Should have 3 requirement files
-            req_files = list(section_dir.glob("*.yml"))
+            # Should have 3 requirement files directly in policy_dir (flat structure)
+            req_files = list(policy_dir.glob("*.yml"))
             assert len(req_files) == 3
 
             # Step 6: Verify content preservation
