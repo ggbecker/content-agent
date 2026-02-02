@@ -66,9 +66,7 @@ class RuleRenderedContent(BaseModel):
     """Rendered content for a rule (from build artifacts)."""
 
     product: str = Field(..., description="Product this was rendered for")
-    rendered_yaml: str | None = Field(
-        None, description="Fully rendered YAML (variables expanded)"
-    )
+    rendered_yaml: str | None = Field(None, description="Fully rendered YAML (variables expanded)")
     rendered_oval: str | None = Field(None, description="Rendered OVAL check content")
     rendered_remediations: dict[str, str] = Field(
         default_factory=dict, description="Rendered remediation scripts by type"
