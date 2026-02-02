@@ -28,8 +28,8 @@ class TestContentSettings:
 
     def test_env_var_override(self):
         """Test environment variable override."""
-        os.environ["CAC_MCP_CONTENT__REPOSITORY"] = "/custom/path"
-        os.environ["CAC_MCP_CONTENT__BRANCH"] = "develop"
+        os.environ["CONTENT_AGENT_CONTENT__REPOSITORY"] = "/custom/path"
+        os.environ["CONTENT_AGENT_CONTENT__BRANCH"] = "develop"
 
         settings = ContentSettings()
 
@@ -37,8 +37,8 @@ class TestContentSettings:
         assert settings.branch == "develop"
 
         # Cleanup
-        del os.environ["CAC_MCP_CONTENT__REPOSITORY"]
-        del os.environ["CAC_MCP_CONTENT__BRANCH"]
+        del os.environ["CONTENT_AGENT_CONTENT__REPOSITORY"]
+        del os.environ["CONTENT_AGENT_CONTENT__BRANCH"]
 
 
 class TestBuildSettings:
@@ -191,7 +191,7 @@ build:
     def test_env_overrides_defaults(self):
         """Test environment variables override defaults when no YAML file provided."""
         # Clean up environment first
-        env_var = "CAC_MCP_CONTENT__BRANCH"
+        env_var = "CONTENT_AGENT_CONTENT__BRANCH"
         original_value = os.environ.get(env_var)
 
         try:
