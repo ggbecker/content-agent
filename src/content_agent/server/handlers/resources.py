@@ -47,6 +47,7 @@ async def handle_resource_read(uri: str) -> str:
             # List all products
             products = discovery.list_products()
             import json
+
             return json.dumps([p.model_dump() for p in products], indent=2)
         elif len(path_parts) == 2:
             # Get specific product
@@ -55,6 +56,7 @@ async def handle_resource_read(uri: str) -> str:
             if not product:
                 raise ValueError(f"Product not found: {product_id}")
             import json
+
             return json.dumps(product.model_dump(), indent=2)
         else:
             raise ValueError(f"Invalid products resource path: {uri}")
@@ -64,6 +66,7 @@ async def handle_resource_read(uri: str) -> str:
             # List all rules (limited)
             rules = discovery.search_rules(limit=100)
             import json
+
             return json.dumps([r.model_dump() for r in rules], indent=2)
         elif len(path_parts) == 2:
             # Get specific rule
@@ -72,6 +75,7 @@ async def handle_resource_read(uri: str) -> str:
             if not rule:
                 raise ValueError(f"Rule not found: {rule_id}")
             import json
+
             return json.dumps(rule.model_dump(), indent=2)
         else:
             raise ValueError(f"Invalid rules resource path: {uri}")
@@ -81,6 +85,7 @@ async def handle_resource_read(uri: str) -> str:
             # List all templates
             templates = discovery.list_templates()
             import json
+
             return json.dumps([t.model_dump() for t in templates], indent=2)
         elif len(path_parts) == 2:
             # Get template schema
@@ -89,6 +94,7 @@ async def handle_resource_read(uri: str) -> str:
             if not schema:
                 raise ValueError(f"Template not found: {template_name}")
             import json
+
             return json.dumps(schema.model_dump(), indent=2)
         else:
             raise ValueError(f"Invalid templates resource path: {uri}")
@@ -98,6 +104,7 @@ async def handle_resource_read(uri: str) -> str:
             # List all profiles
             profiles = discovery.list_profiles()
             import json
+
             return json.dumps([p.model_dump() for p in profiles], indent=2)
         elif len(path_parts) == 3:
             # Get specific profile (product/profile_id)
@@ -107,6 +114,7 @@ async def handle_resource_read(uri: str) -> str:
             if not profile:
                 raise ValueError(f"Profile not found: {profile_id} in {product}")
             import json
+
             return json.dumps(profile.model_dump(), indent=2)
         else:
             raise ValueError(f"Invalid profiles resource path: {uri}")
@@ -116,6 +124,7 @@ async def handle_resource_read(uri: str) -> str:
             # List control frameworks
             controls = discovery.list_controls()
             import json
+
             return json.dumps(controls, indent=2)
         else:
             raise ValueError(f"Invalid controls resource path: {uri}")
@@ -126,6 +135,7 @@ async def handle_resource_read(uri: str) -> str:
             # List built products
             products = discovery.list_built_products()
             import json
+
             return json.dumps({"products": products, "count": len(products)}, indent=2)
         elif len(path_parts) == 2:
             # Get product datastream info
@@ -134,6 +144,7 @@ async def handle_resource_read(uri: str) -> str:
             if not info:
                 raise ValueError(f"No build artifacts for product: {product}")
             import json
+
             return json.dumps(info.model_dump(), indent=2)
         elif len(path_parts) >= 4 and path_parts[2] == "rules":
             # Get rendered rule: build/{product}/rules/{rule_id}
@@ -143,6 +154,7 @@ async def handle_resource_read(uri: str) -> str:
             if not rendered:
                 raise ValueError(f"Rendered rule not found: {rule_id} for {product}")
             import json
+
             return json.dumps(rendered.model_dump(), indent=2)
         else:
             raise ValueError(f"Invalid build resource path: {uri}")

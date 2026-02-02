@@ -13,9 +13,7 @@ class RuleSearchResult(BaseModel):
     title: str = Field(..., description="Rule title")
     severity: str = Field(..., description="Rule severity (low, medium, high, unknown)")
     description: Optional[str] = Field(None, description="Short description")
-    products: List[str] = Field(
-        default_factory=list, description="Products this rule applies to"
-    )
+    products: List[str] = Field(default_factory=list, description="Products this rule applies to")
     file_path: str = Field(..., description="Path to rule.yml file")
 
     class Config:
@@ -54,9 +52,7 @@ class RuleReferences(BaseModel):
     cis: List[str] = Field(default_factory=list, description="CIS Benchmark references")
     cui: List[str] = Field(default_factory=list, description="CUI references")
     disa: List[str] = Field(default_factory=list, description="DISA STIG references")
-    isa62443: List[str] = Field(
-        default_factory=list, description="ISA-62443 references"
-    )
+    isa62443: List[str] = Field(default_factory=list, description="ISA-62443 references")
     pcidss: List[str] = Field(default_factory=list, description="PCI-DSS references")
     hipaa: List[str] = Field(default_factory=list, description="HIPAA references")
 
@@ -73,9 +69,7 @@ class RuleRenderedContent(BaseModel):
     rendered_yaml: Optional[str] = Field(
         None, description="Fully rendered YAML (variables expanded)"
     )
-    rendered_oval: Optional[str] = Field(
-        None, description="Rendered OVAL check content"
-    )
+    rendered_oval: Optional[str] = Field(None, description="Rendered OVAL check content")
     rendered_remediations: Dict[str, str] = Field(
         default_factory=dict, description="Rendered remediation scripts by type"
     )
@@ -109,12 +103,8 @@ class RuleDetails(BaseModel):
     references: RuleReferences = Field(
         default_factory=RuleReferences, description="Compliance framework references"
     )
-    products: List[str] = Field(
-        default_factory=list, description="Applicable products"
-    )
-    platforms: List[str] = Field(
-        default_factory=list, description="Applicable platforms"
-    )
+    products: List[str] = Field(default_factory=list, description="Applicable products")
+    platforms: List[str] = Field(default_factory=list, description="Applicable platforms")
     remediations: Dict[str, bool] = Field(
         default_factory=dict,
         description="Available remediations (bash, ansible, anaconda, etc.)",
@@ -122,14 +112,10 @@ class RuleDetails(BaseModel):
     checks: Dict[str, bool] = Field(
         default_factory=dict, description="Available checks (oval, etc.)"
     )
-    test_scenarios: List[str] = Field(
-        default_factory=list, description="Available test scenarios"
-    )
+    test_scenarios: List[str] = Field(default_factory=list, description="Available test scenarios")
     file_path: str = Field(..., description="Path to rule.yml file")
     rule_dir: str = Field(..., description="Path to rule directory")
-    last_modified: Optional[datetime] = Field(
-        None, description="Last modification timestamp"
-    )
+    last_modified: Optional[datetime] = Field(None, description="Last modification timestamp")
     template: Optional[Dict[str, Any]] = Field(
         None, description="Template information if rule uses a template"
     )
@@ -178,12 +164,8 @@ class ValidationResult(BaseModel):
     """Result of rule validation."""
 
     valid: bool = Field(..., description="Whether validation passed")
-    errors: List[ValidationError] = Field(
-        default_factory=list, description="Validation errors"
-    )
-    warnings: List[ValidationError] = Field(
-        default_factory=list, description="Validation warnings"
-    )
+    errors: List[ValidationError] = Field(default_factory=list, description="Validation errors")
+    warnings: List[ValidationError] = Field(default_factory=list, description="Validation warnings")
     fixes_applied: List[str] = Field(
         default_factory=list, description="Auto-fixes that were applied"
     )

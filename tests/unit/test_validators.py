@@ -192,9 +192,7 @@ platforms:
         result = validator.validate_yaml(yaml_content)
 
         # Should have warning about both fields
-        platform_warnings = [
-            w for w in result.warnings if "platform" in w.field.lower()
-        ]
+        platform_warnings = [w for w in result.warnings if "platform" in w.field.lower()]
         assert len(platform_warnings) > 0
 
     def test_empty_list_warning(self):

@@ -190,9 +190,7 @@ class RuleDiscovery:
 
             # Include rendered content if requested
             if include_rendered:
-                rendered_content = self._get_rendered_content(
-                    rule_id, product, rendered_detail
-                )
+                rendered_content = self._get_rendered_content(rule_id, product, rendered_detail)
                 if rendered_content:
                     details.rendered = rendered_content
 
@@ -226,9 +224,7 @@ class RuleDiscovery:
 
         logger.info(f"Indexed {len(self._rule_cache)} rules")
 
-    def _load_search_result(
-        self, rule_id: str, rule_path: Path
-    ) -> Optional[RuleSearchResult]:
+    def _load_search_result(self, rule_id: str, rule_path: Path) -> Optional[RuleSearchResult]:
         """Load rule as search result.
 
         Args:
@@ -299,9 +295,7 @@ class RuleDiscovery:
             True if matches
         """
         # Search in title and description
-        searchable = (
-            f"{result.title} {result.description}".lower()
-        )
+        searchable = f"{result.title} {result.description}".lower()
         return query in searchable
 
     def _matches_filters(
@@ -346,7 +340,11 @@ class RuleDiscovery:
             cis=identifiers_data.get("cis"),
             nist=identifiers_data.get("nist"),
             stigid=identifiers_data.get("stigid"),
-            **{k: v for k, v in identifiers_data.items() if k not in ["cce", "cis", "nist", "stigid"]}
+            **{
+                k: v
+                for k, v in identifiers_data.items()
+                if k not in ["cce", "cis", "nist", "stigid"]
+            },
         )
 
     def _load_references(self, data: dict) -> RuleReferences:
@@ -376,8 +374,11 @@ class RuleDiscovery:
             isa62443=ensure_list(references_data.get("isa-62443")),
             pcidss=ensure_list(references_data.get("pcidss")),
             hipaa=ensure_list(references_data.get("hipaa")),
-            **{k: ensure_list(v) for k, v in references_data.items()
-               if k not in ["nist", "cis", "cui", "disa", "isa-62443", "pcidss", "hipaa"]}
+            **{
+                k: ensure_list(v)
+                for k, v in references_data.items()
+                if k not in ["nist", "cis", "cui", "disa", "isa-62443", "pcidss", "hipaa"]
+            },
         )
 
     def _detect_remediations(self, rule_dir: Path) -> Dict[str, bool]:

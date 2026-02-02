@@ -35,12 +35,8 @@ class ProfileDetails(BaseModel):
     title: str = Field(..., description="Profile title")
     description: str = Field(..., description="Full description")
     product: str = Field(..., description="Product identifier")
-    extends: Optional[str] = Field(
-        None, description="Parent profile if this extends another"
-    )
-    selections: List[str] = Field(
-        default_factory=list, description="Selected rule IDs"
-    )
+    extends: Optional[str] = Field(None, description="Parent profile if this extends another")
+    selections: List[str] = Field(default_factory=list, description="Selected rule IDs")
     variables: Dict[str, str] = Field(
         default_factory=dict, description="Profile-specific variable values"
     )
@@ -111,9 +107,7 @@ class TemplateSchema(BaseModel):
     parameters: List[TemplateParameter] = Field(
         default_factory=list, description="Template parameters"
     )
-    example_usage: Optional[Dict[str, str]] = Field(
-        None, description="Example parameter values"
-    )
+    example_usage: Optional[Dict[str, str]] = Field(None, description="Example parameter values")
 
     class Config:
         """Pydantic config."""
@@ -149,9 +143,7 @@ class ScaffoldingResult(BaseModel):
 
     success: bool = Field(..., description="Whether operation succeeded")
     rule_id: str = Field(..., description="Rule identifier")
-    files_created: List[str] = Field(
-        default_factory=list, description="Files that were created"
-    )
+    files_created: List[str] = Field(default_factory=list, description="Files that were created")
     rule_dir: str = Field(..., description="Path to rule directory")
     message: str = Field(..., description="Success or error message")
     validation: Optional["ValidationResult"] = Field(  # Forward reference

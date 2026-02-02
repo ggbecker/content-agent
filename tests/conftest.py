@@ -125,6 +125,7 @@ def initialized_content_repo(mock_content_repo, monkeypatch):
 
     # Mock SSG modules since they won't be available in the test environment
     import content_agent.core.integration.ssg_modules as sm
+
     mock_ssg = MagicMock()
     sm._ssg_modules = mock_ssg
 
@@ -133,6 +134,7 @@ def initialized_content_repo(mock_content_repo, monkeypatch):
     # Cleanup: Reset the global instances
     import content_agent.config.settings as settings_module
     import content_agent.core.integration.content_manager as cm
+
     settings_module._settings = None
     cm._content_repo = None
     sm._ssg_modules = None

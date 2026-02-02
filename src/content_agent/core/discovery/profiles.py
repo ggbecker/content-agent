@@ -59,17 +59,13 @@ class ProfileDiscovery:
                     if summary:
                         profiles.append(summary)
                 except Exception as e:
-                    logger.warning(
-                        f"Failed to load profile {profile_file.stem}: {e}"
-                    )
+                    logger.warning(f"Failed to load profile {profile_file.stem}: {e}")
 
         profiles.sort(key=lambda p: (p.product, p.profile_id))
         logger.info(f"Found {len(profiles)} profiles")
         return profiles
 
-    def get_profile_details(
-        self, profile_id: str, product: str
-    ) -> Optional[ProfileDetails]:
+    def get_profile_details(self, profile_id: str, product: str) -> Optional[ProfileDetails]:
         """Get detailed information about a profile.
 
         Args:
@@ -82,11 +78,7 @@ class ProfileDiscovery:
         logger.debug(f"Getting details for profile: {profile_id} in {product}")
 
         profile_path = (
-            self.content_repo.path
-            / "products"
-            / product
-            / "profiles"
-            / f"{profile_id}.profile"
+            self.content_repo.path / "products" / product / "profiles" / f"{profile_id}.profile"
         )
 
         if not profile_path.exists():

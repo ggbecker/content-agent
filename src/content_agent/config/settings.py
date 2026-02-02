@@ -21,9 +21,7 @@ class ContentSettings(BaseSettings):
         description="Path for managed repository",
     )
     branch: str = Field(default="master", description="Git branch to use")
-    auto_update: bool = Field(
-        default=True, description="Auto-update managed repository"
-    )
+    auto_update: bool = Field(default=True, description="Auto-update managed repository")
     repo_url: str = Field(
         default="https://github.com/ComplianceAsCode/content.git",
         description="Repository URL for managed checkout",
@@ -62,13 +60,9 @@ class BuildSettings(BaseSettings):
     max_concurrent_builds: int = Field(
         default=2, description="Maximum concurrent builds", ge=1, le=10
     )
-    timeout: int = Field(
-        default=3600, description="Build timeout in seconds", ge=60, le=7200
-    )
+    timeout: int = Field(default=3600, description="Build timeout in seconds", ge=60, le=7200)
     keep_logs: bool = Field(default=True, description="Keep build logs")
-    log_retention_days: int = Field(
-        default=7, description="Log retention in days", ge=1
-    )
+    log_retention_days: int = Field(default=7, description="Log retention in days", ge=1)
 
     model_config = SettingsConfigDict(env_prefix="CONTENT_AGENT_BUILD__")
 
@@ -76,15 +70,11 @@ class BuildSettings(BaseSettings):
 class TestingSettings(BaseSettings):
     """Testing settings."""
 
-    backend: Literal["podman", "docker"] = Field(
-        default="podman", description="Container backend"
-    )
+    backend: Literal["podman", "docker"] = Field(default="podman", description="Container backend")
     max_concurrent_tests: int = Field(
         default=4, description="Maximum concurrent tests", ge=1, le=20
     )
-    timeout: int = Field(
-        default=1800, description="Test timeout in seconds", ge=60, le=3600
-    )
+    timeout: int = Field(default=1800, description="Test timeout in seconds", ge=60, le=3600)
     keep_logs: bool = Field(default=True, description="Keep test logs")
     image_strategy: Literal["auto", "latest"] = Field(
         default="auto", description="Container image selection"
@@ -100,12 +90,8 @@ class JobsSettings(BaseSettings):
         default=Path.home() / ".content-agent" / "jobs.db",
         description="Job database file",
     )
-    max_workers: int = Field(
-        default=4, description="Thread pool size", ge=1, le=20
-    )
-    retention_days: int = Field(
-        default=7, description="Job history retention in days", ge=1
-    )
+    max_workers: int = Field(default=4, description="Thread pool size", ge=1, le=20)
+    retention_days: int = Field(default=7, description="Job history retention in days", ge=1)
     poll_interval: float = Field(
         default=1.0, description="Job status polling interval", ge=0.1, le=10.0
     )
@@ -156,9 +142,7 @@ class Settings(BaseSettings):
     security: SecuritySettings = Field(default_factory=SecuritySettings)
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
 
-    model_config = SettingsConfigDict(
-        env_prefix="CONTENT_AGENT_", env_nested_delimiter="__"
-    )
+    model_config = SettingsConfigDict(env_prefix="CONTENT_AGENT_", env_nested_delimiter="__")
 
     @classmethod
     def from_yaml(cls, yaml_path: Path) -> "Settings":

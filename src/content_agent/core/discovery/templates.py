@@ -79,9 +79,7 @@ class TemplateDiscovery:
             parameters = self._extract_parameters_from_csv(csv_file)
         else:
             # Fallback: basic parameter detection
-            logger.warning(
-                f"No configuration found for {template_name}, using basic detection"
-            )
+            logger.warning(f"No configuration found for {template_name}, using basic detection")
             parameters = self._detect_basic_parameters(template_dir)
 
         description = self._extract_description(template_dir)
@@ -224,6 +222,7 @@ class TemplateDiscovery:
         csv_files = list(template_dir.glob("*.csv"))
         if csv_files:
             import csv
+
             try:
                 with open(csv_files[0], "r") as f:
                     reader = csv.DictReader(f)

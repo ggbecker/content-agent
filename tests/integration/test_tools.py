@@ -30,9 +30,7 @@ class TestToolHandlers:
     @pytest.mark.asyncio
     async def test_search_rules_tool(self):
         """Test search_rules tool."""
-        result = await handle_tool_call(
-            "search_rules", {"query": "ssh", "limit": 5}
-        )
+        result = await handle_tool_call("search_rules", {"query": "ssh", "limit": 5})
 
         assert len(result) == 1
         assert result[0]["type"] == "text"
@@ -51,9 +49,7 @@ title: Test Rule
 description: Test description
 severity: medium
 """
-        result = await handle_tool_call(
-            "validate_rule_yaml", {"rule_yaml": yaml_content}
-        )
+        result = await handle_tool_call("validate_rule_yaml", {"rule_yaml": yaml_content})
 
         assert len(result) == 1
         assert result[0]["type"] == "text"
@@ -70,9 +66,7 @@ severity: medium
 title: Test Rule
 severity: invalid_severity
 """
-        result = await handle_tool_call(
-            "validate_rule_yaml", {"rule_yaml": yaml_content}
-        )
+        result = await handle_tool_call("validate_rule_yaml", {"rule_yaml": yaml_content})
 
         data = json.loads(result[0]["text"])
         assert data["valid"] is False
@@ -116,15 +110,11 @@ title: Test
 description: Test
 severity: {severity}
 """
-            result = await handle_tool_call(
-                "validate_rule_yaml", {"rule_yaml": yaml_content}
-            )
+            result = await handle_tool_call("validate_rule_yaml", {"rule_yaml": yaml_content})
 
             # Should not have severity errors
             data = json.loads(result[0]["text"])
-            severity_errors = [
-                e for e in data.get("errors", []) if e.get("field") == "severity"
-            ]
+            severity_errors = [e for e in data.get("errors", []) if e.get("field") == "severity"]
             assert len(severity_errors) == 0
 
     @pytest.mark.asyncio
@@ -132,9 +122,7 @@ severity: {severity}
         """Test search_rules with limit parameter."""
         # Note: This test may be skipped if no real content
         try:
-            result = await handle_tool_call(
-                "search_rules", {"query": "ssh", "limit": 3}
-            )
+            result = await handle_tool_call("search_rules", {"query": "ssh", "limit": 3})
 
             response_text = result[0]["text"]
             # Extract JSON part (after summary line)

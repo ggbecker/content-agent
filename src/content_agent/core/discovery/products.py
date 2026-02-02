@@ -112,9 +112,7 @@ class ProductDiscovery:
             logger.error(f"Failed to load product {product_id}: {e}")
             return None
 
-    def _load_product_summary(
-        self, product_id: str, product_yml: Path
-    ) -> Optional[ProductSummary]:
+    def _load_product_summary(self, product_id: str, product_yml: Path) -> Optional[ProductSummary]:
         """Load product summary from product.yml.
 
         Args:

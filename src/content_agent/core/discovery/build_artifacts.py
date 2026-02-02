@@ -38,7 +38,7 @@ class BuildArtifactsDiscovery:
 
         built_products = []
         for product_dir in build_path.iterdir():
-            if product_dir.is_dir() and not product_dir.name.startswith('.'):
+            if product_dir.is_dir() and not product_dir.name.startswith("."):
                 # Check if it looks like a product build (has some common files/dirs)
                 if self._is_product_build_dir(product_dir):
                     built_products.append(product_dir.name)
@@ -46,9 +46,7 @@ class BuildArtifactsDiscovery:
         logger.info(f"Found {len(built_products)} built products")
         return sorted(built_products)
 
-    def get_rendered_rule(
-        self, product: str, rule_id: str
-    ) -> Optional[RenderedRule]:
+    def get_rendered_rule(self, product: str, rule_id: str) -> Optional[RenderedRule]:
         """Get rendered rule content from build directory.
 
         Args:
@@ -84,6 +82,7 @@ class BuildArtifactsDiscovery:
 
             # Convert JSON back to YAML-like format for consistency
             import yaml
+
             rendered_yaml = yaml.dump(rule_data, default_flow_style=False, sort_keys=False)
         except Exception as e:
             logger.warning(f"Failed to read rendered rule JSON: {e}")
@@ -107,7 +106,7 @@ class BuildArtifactsDiscovery:
             "puppet": ".pp",
             "ignition": ".yml",
             "kubernetes": ".yml",
-            "blueprint": ".toml"
+            "blueprint": ".toml",
         }
 
         for rem_type, ext in remediation_types.items():
@@ -244,9 +243,7 @@ class BuildArtifactsDiscovery:
                                     product=prod,
                                     match_type="rule_json",
                                     match_snippet=snippet,
-                                    file_path=str(
-                                        rule_json.relative_to(self.content_repo.path)
-                                    ),
+                                    file_path=str(rule_json.relative_to(self.content_repo.path)),
                                 )
                             )
                             if len(results) >= limit:
@@ -261,7 +258,7 @@ class BuildArtifactsDiscovery:
                     if not rem_file.is_file():
                         continue
                     # Skip if not a text file
-                    if rem_file.suffix not in ['.sh', '.yml', '.yaml', '.pp', '.toml', '.anaconda']:
+                    if rem_file.suffix not in [".sh", ".yml", ".yaml", ".pp", ".toml", ".anaconda"]:
                         continue
 
                     try:
@@ -276,9 +273,7 @@ class BuildArtifactsDiscovery:
                                     product=prod,
                                     match_type=f"remediation_{rem_type}",
                                     match_snippet=snippet,
-                                    file_path=str(
-                                        rem_file.relative_to(self.content_repo.path)
-                                    ),
+                                    file_path=str(rem_file.relative_to(self.content_repo.path)),
                                 )
                             )
                             if len(results) >= limit:
@@ -301,9 +296,7 @@ class BuildArtifactsDiscovery:
                                     product=prod,
                                     match_type="oval",
                                     match_snippet=snippet,
-                                    file_path=str(
-                                        oval_file.relative_to(self.content_repo.path)
-                                    ),
+                                    file_path=str(oval_file.relative_to(self.content_repo.path)),
                                 )
                             )
                             if len(results) >= limit:
@@ -338,9 +331,7 @@ class BuildArtifactsDiscovery:
 
         return False
 
-    def _extract_snippet(
-        self, content: str, query: str, context_chars: int = 100
-    ) -> str:
+    def _extract_snippet(self, content: str, query: str, context_chars: int = 100) -> str:
         """Extract a snippet around the search match.
 
         Args:

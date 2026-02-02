@@ -9,9 +9,7 @@ from pydantic import BaseModel, Field
 class ProductSummary(BaseModel):
     """Summary information about a product."""
 
-    product_id: str = Field(
-        ..., description="Product identifier (e.g., rhel9, fedora, ocp4)"
-    )
+    product_id: str = Field(..., description="Product identifier (e.g., rhel9, fedora, ocp4)")
     name: str = Field(..., description="Human-readable product name")
     product_type: str = Field(..., description="Product type (e.g., rhel, fedora, ocp)")
     version: Optional[str] = Field(None, description="Product version if applicable")
@@ -48,16 +46,12 @@ class ProductDetails(BaseModel):
     product_type: str = Field(..., description="Product type")
     version: Optional[str] = Field(None, description="Product version")
     description: Optional[str] = Field(None, description="Product description")
-    profiles: List[str] = Field(
-        default_factory=list, description="List of available profile IDs"
-    )
+    profiles: List[str] = Field(default_factory=list, description="List of available profile IDs")
     benchmark_root: str = Field(..., description="Path to product benchmark directory")
     product_dir: str = Field(..., description="Path to product directory")
     cpe: Optional[str] = Field(None, description="CPE identifier")
     stats: Optional[ProductStats] = Field(None, description="Product statistics")
-    last_modified: Optional[datetime] = Field(
-        None, description="Last modification timestamp"
-    )
+    last_modified: Optional[datetime] = Field(None, description="Last modification timestamp")
 
     class Config:
         """Pydantic config."""

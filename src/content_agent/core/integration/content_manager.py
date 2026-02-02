@@ -152,9 +152,7 @@ class ContentRepository:
 
         # Check for key directories
         required_dirs = ["ssg", "linux_os", "products"]
-        missing_dirs = [
-            d for d in required_dirs if not (self._repo_path / d).exists()
-        ]
+        missing_dirs = [d for d in required_dirs if not (self._repo_path / d).exists()]
 
         if missing_dirs:
             raise RuntimeError(
@@ -241,7 +239,7 @@ class ContentRepository:
             # Look for project(scap_security_guide VERSION X.Y.Z)
             import re
 
-            match = re.search(r'project\([^)]*VERSION\s+(\S+)', content)
+            match = re.search(r"project\([^)]*VERSION\s+(\S+)", content)
             if match:
                 return match.group(1)
         except Exception as e:

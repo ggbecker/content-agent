@@ -324,7 +324,7 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
         # Discovery tools
         if name == "list_products":
             products = discovery.list_products()
-            result = [p.model_dump(mode='json') for p in products]
+            result = [p.model_dump(mode="json") for p in products]
             return [{"type": "text", "text": json.dumps(result, indent=2)}]
 
         elif name == "get_product_details":
@@ -332,7 +332,7 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
             product = discovery.get_product_details(product_id)
             if not product:
                 return [{"type": "text", "text": f"Product not found: {product_id}"}]
-            return [{"type": "text", "text": json.dumps(product.model_dump(mode='json'), indent=2)}]
+            return [{"type": "text", "text": json.dumps(product.model_dump(mode="json"), indent=2)}]
 
         elif name == "search_rules":
             query = arguments.get("query")
@@ -343,7 +343,7 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
             rules = discovery.search_rules(
                 query=query, product=product, severity=severity, limit=limit
             )
-            result = [r.model_dump(mode='json') for r in rules]
+            result = [r.model_dump(mode="json") for r in rules]
             summary = f"Found {len(rules)} rules matching search criteria.\n\n"
             return [{"type": "text", "text": summary + json.dumps(result, indent=2)}]
 
@@ -353,14 +353,12 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
             product = arguments.get("product")
             rendered_detail = arguments.get("rendered_detail", "metadata")
 
-            rule = discovery.get_rule_details(
-                rule_id, include_rendered, product, rendered_detail
-            )
+            rule = discovery.get_rule_details(rule_id, include_rendered, product, rendered_detail)
             if not rule:
                 return [{"type": "text", "text": f"Rule not found: {rule_id}"}]
 
             # Add informative message about rendered content
-            result_json = json.dumps(rule.model_dump(mode='json'), indent=2)
+            result_json = json.dumps(rule.model_dump(mode="json"), indent=2)
             if include_rendered and rule.rendered:
                 products_with_rendered = list(rule.rendered.keys())
                 detail_msg = (
@@ -381,7 +379,7 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
 
         elif name == "list_templates":
             templates = discovery.list_templates()
-            result = [t.model_dump(mode='json') for t in templates]
+            result = [t.model_dump(mode="json") for t in templates]
             return [{"type": "text", "text": json.dumps(result, indent=2)}]
 
         elif name == "get_template_schema":
@@ -389,12 +387,12 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
             schema = discovery.get_template_schema(template_name)
             if not schema:
                 return [{"type": "text", "text": f"Template not found: {template_name}"}]
-            return [{"type": "text", "text": json.dumps(schema.model_dump(mode='json'), indent=2)}]
+            return [{"type": "text", "text": json.dumps(schema.model_dump(mode="json"), indent=2)}]
 
         elif name == "list_profiles":
             product = arguments.get("product")
             profiles = discovery.list_profiles(product=product)
-            result = [p.model_dump(mode='json') for p in profiles]
+            result = [p.model_dump(mode="json") for p in profiles]
             return [{"type": "text", "text": json.dumps(result, indent=2)}]
 
         elif name == "get_profile_details":
@@ -408,7 +406,7 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
                         "text": f"Profile not found: {profile_id} in {product}",
                     }
                 ]
-            return [{"type": "text", "text": json.dumps(profile.model_dump(mode='json'), indent=2)}]
+            return [{"type": "text", "text": json.dumps(profile.model_dump(mode="json"), indent=2)}]
 
         # Scaffolding tools
         elif name == "generate_rule_boilerplate":
@@ -421,7 +419,7 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
                 location=arguments.get("location"),
                 rationale=arguments.get("rationale"),
             )
-            return [{"type": "text", "text": json.dumps(result.model_dump(mode='json'), indent=2)}]
+            return [{"type": "text", "text": json.dumps(result.model_dump(mode="json"), indent=2)}]
 
         elif name == "validate_rule_yaml":
             result = scaffolding.validate_rule_yaml(
@@ -429,7 +427,7 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
                 check_references=arguments.get("check_references", True),
                 auto_fix=arguments.get("auto_fix", False),
             )
-            return [{"type": "text", "text": json.dumps(result.model_dump(mode='json'), indent=2)}]
+            return [{"type": "text", "text": json.dumps(result.model_dump(mode="json"), indent=2)}]
 
         elif name == "generate_rule_from_template":
             result = scaffolding.generate_rule_from_template(
@@ -438,7 +436,7 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
                 rule_id=arguments["rule_id"],
                 product=arguments["product"],
             )
-            return [{"type": "text", "text": json.dumps(result.model_dump(mode='json'), indent=2)}]
+            return [{"type": "text", "text": json.dumps(result.model_dump(mode="json"), indent=2)}]
 
         # Build artifacts tools
         elif name == "list_built_products":
@@ -459,7 +457,9 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
                         f"Make sure the product has been built (./build_product {product}).",
                     }
                 ]
-            return [{"type": "text", "text": json.dumps(rendered.model_dump(mode='json'), indent=2)}]
+            return [
+                {"type": "text", "text": json.dumps(rendered.model_dump(mode="json"), indent=2)}
+            ]
 
         elif name == "get_datastream_info":
             product = arguments["product"]
@@ -471,7 +471,7 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
                         "text": f"Datastream info not available for product: {product}",
                     }
                 ]
-            return [{"type": "text", "text": json.dumps(info.model_dump(mode='json'), indent=2)}]
+            return [{"type": "text", "text": json.dumps(info.model_dump(mode="json"), indent=2)}]
 
         elif name == "search_rendered_content":
             query = arguments["query"]
@@ -479,7 +479,7 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
             limit = arguments.get("limit", 50)
 
             results = discovery.search_rendered_content(query, product, limit)
-            result = [r.model_dump(mode='json') for r in results]
+            result = [r.model_dump(mode="json") for r in results]
             summary = f"Found {len(results)} matches in rendered build artifacts.\n\n"
             return [{"type": "text", "text": summary + json.dumps(result, indent=2)}]
 
