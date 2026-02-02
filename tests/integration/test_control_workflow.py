@@ -329,6 +329,9 @@ class TestControlWorkflowWithoutAI:
             for req_file in req_files:
                 with open(req_file) as f:
                     data = yaml.safe_load(f)
-                    assert "ITSAR-" in data["id"]
-                    assert data["description"]
-                    assert "shall" in data["description"].lower()
+                    # New format has controls: wrapper
+                    assert "controls" in data
+                    control = data["controls"][0]
+                    assert "ITSAR-" in control["id"]
+                    assert control["title"]
+                    assert "shall" in control["title"].lower()

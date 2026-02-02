@@ -48,6 +48,10 @@ class ControlRequirement(BaseModel):
         default=None,
         description="Additional notes or comments",
     )
+    levels: list[str] = Field(
+        default_factory=list,
+        description="Compliance levels (e.g., ['low', 'medium', 'high'])",
+    )
     section: Optional[str] = Field(
         default=None,
         description="Section identifier this requirement belongs to",

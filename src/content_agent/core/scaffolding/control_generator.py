@@ -16,6 +16,23 @@ from content_agent.models.control import (
 logger = logging.getLogger(__name__)
 
 
+# Custom YAML representer for better multi-line string formatting
+class folded_str(str):
+    """String subclass that will be represented as folded scalar in YAML."""
+    pass
+
+
+def folded_str_representer(dumper, data):
+    """Represent folded_str as folded scalar (>)."""
+    if '\n' in data or len(data) > 80:
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='>')
+    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+
+
+# Register the custom representer
+yaml.add_representer(folded_str, folded_str_representer)
+
+
 class ControlGenerator:
     """Generator for control file structures."""
 
@@ -169,7 +186,7 @@ class ControlGenerator:
     def generate_requirement_file(
         self, requirement: ControlRequirement, file_path: Path
     ) -> bool:
-        """Generate individual requirement control file.
+        """Generate individual requirement control file in ComplianceAsCode format.
 
         Args:
             requirement: Control requirement
@@ -179,28 +196,43 @@ class ControlGenerator:
             True if successful, False otherwise
         """
         try:
-            # Create YAML content
-            content = {
+            # Build control item following ComplianceAsCode format
+            control_item = {
                 "id": requirement.id,
-                "title": requirement.title,
-                "description": requirement.description,
-                "status": requirement.status,
             }
 
-            # Add optional fields if present
-            if requirement.rules:
-                content["rules"] = requirement.rules
+            # Add levels if specified
+            if requirement.levels:
+                control_item["levels"] = requirement.levels
 
+            # Use description as title (full requirement text)
+            # Wrap in folded_str for better multi-line formatting
+            control_item["title"] = folded_str(requirement.description)
+
+            # Add rules if present
+            if requirement.rules:
+                control_item["rules"] = requirement.rules
+
+            # Add status
+            control_item["status"] = requirement.status
+
+            # Add optional fields
             if requirement.related_rules:
-                content["related_rules"] = requirement.related_rules
+                control_item["related_rules"] = requirement.related_rules
 
             if requirement.references:
-                content["references"] = requirement.references
+                control_item["references"] = requirement.references
 
             if requirement.notes:
-                content["notes"] = requirement.notes
+                # Use folded_str for notes too
+                control_item["notes"] = folded_str(requirement.notes)
 
-            # Write YAML file
+            # Wrap in controls list (ComplianceAsCode format)
+            content = {
+                "controls": [control_item]
+            }
+
+            # Write YAML file with proper formatting
             with open(file_path, "w") as f:
                 yaml.dump(
                     content,
@@ -208,6 +240,8 @@ class ControlGenerator:
                     default_flow_style=False,
                     sort_keys=False,
                     allow_unicode=True,
+                    indent=4,
+                    width=120,  # Wider line width for longer titles
                 )
 
             logger.debug(f"Created requirement file: {file_path}")

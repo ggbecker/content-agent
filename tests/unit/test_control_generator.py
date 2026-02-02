@@ -42,9 +42,15 @@ def test_generate_requirement_file(tmp_path):
     with open(file_path) as f:
         data = yaml.safe_load(f)
 
-    assert data["id"] == "AC-2"
-    assert data["title"] == "Account Management"
-    assert len(data["rules"]) == 1
+    # New format has controls: wrapper
+    assert "controls" in data
+    assert len(data["controls"]) == 1
+
+    control = data["controls"][0]
+    assert control["id"] == "AC-2"
+    assert control["title"] == "The organization manages information system accounts."
+    assert len(control["rules"]) == 1
+    assert control["status"] == "automated"
 
 
 def test_generate_parent_control_file(tmp_path):
