@@ -344,6 +344,15 @@ TOOLS = [
                     "type": "string",
                     "description": "JSON string of extracted requirements. Format: {\"requirements\": [{\"id\": \"...\", \"title\": \"...\", \"description\": \"...\", \"section\": \"...\"}]} or just the array",
                 },
+                "version": {
+                    "type": "string",
+                    "description": "Optional version string (e.g., 'v3r1', '1.0')",
+                },
+                "levels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Optional compliance levels (e.g., ['high', 'medium', 'low'])",
+                },
                 "nested_by_section": {
                     "type": "boolean",
                     "description": "Deprecated - always uses flat structure as required by ComplianceAsCode",
@@ -679,6 +688,8 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
             policy_title = arguments["policy_title"]
             requirements_json = arguments["requirements_json"]
             source_document = arguments.get("source_document")
+            version = arguments.get("version")
+            levels = arguments.get("levels")
             nested = arguments.get("nested_by_section", False)  # Always flat structure
 
             # Parse requirements JSON
@@ -716,6 +727,8 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
                 requirements=requirements,
                 nested_by_section=nested,
                 source_document=source_document,
+                version=version,
+                levels=levels,
             )
 
             summary = f"Generated control structure for {policy_id}\n"

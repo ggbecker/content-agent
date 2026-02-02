@@ -61,8 +61,11 @@ class ControlRequirement(BaseModel):
 class ControlLevel(BaseModel):
     """Compliance level definition (e.g., Level 1, Level 2)."""
 
-    id: str = Field(..., description="Level identifier")
-    title: str = Field(..., description="Level title")
+    id: str = Field(..., description="Level identifier (e.g., 'high', 'medium', 'low')")
+    title: Optional[str] = Field(
+        default=None,
+        description="Level title",
+    )
     description: Optional[str] = Field(
         default=None,
         description="Level description",
@@ -74,15 +77,48 @@ class ControlLevel(BaseModel):
 
 
 class ControlFile(BaseModel):
-    """Control framework file representation."""
+    """Control framework file representation.
+
+    Supports both legacy format (with description, source_document, includes)
+    and ComplianceAsCode format (with policy, source, controls_dir, version).
+    """
 
     id: str = Field(..., description="Policy/framework ID")
     title: str = Field(..., description="Policy/framework name")
-    description: str = Field(..., description="Policy description")
-    source_document: str = Field(
-        ...,
-        description="Source file path or URL",
+
+    # ComplianceAsCode format fields
+    policy: Optional[str] = Field(
+        default=None,
+        description="Policy name (same as title in CAC format)",
     )
+    version: Optional[str] = Field(
+        default=None,
+        description="Version string (e.g., 'v3r1')",
+    )
+    source: Optional[str] = Field(
+        default=None,
+        description="Source URL (CAC format)",
+    )
+    controls_dir: Optional[str] = Field(
+        default=None,
+        description="Directory containing individual control files (CAC format)",
+    )
+
+    # Legacy format fields (optional for backward compatibility)
+    description: Optional[str] = Field(
+        default=None,
+        description="Policy description",
+    )
+    source_document: Optional[str] = Field(
+        default=None,
+        description="Source file path or URL (legacy format)",
+    )
+    includes: list[str] = Field(
+        default_factory=list,
+        description="Paths to included control files (legacy format)",
+    )
+
+    # Common fields
     controls: list[ControlRequirement] = Field(
         default_factory=list,
         description="List of control requirements",
@@ -94,10 +130,6 @@ class ControlFile(BaseModel):
     metadata: dict[str, Any] = Field(
         default_factory=dict,
         description="Additional metadata",
-    )
-    includes: list[str] = Field(
-        default_factory=list,
-        description="Paths to included control files (relative)",
     )
 
 

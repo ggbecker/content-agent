@@ -62,8 +62,10 @@ def test_generate_parent_control_file(tmp_path):
     success = generator.generate_parent_control_file(
         policy_id="test_policy",
         policy_title="Test Policy",
-        requirement_files=["section1/req1.yml", "section1/req2.yml"],
+        requirement_files=["req1.yml", "req2.yml"],
         output_path=file_path,
+        version="v1.0",
+        levels=["high", "medium", "low"],
     )
 
     assert success is True
@@ -75,9 +77,14 @@ def test_generate_parent_control_file(tmp_path):
     with open(file_path) as f:
         data = yaml.safe_load(f)
 
+    # New format checks
     assert data["id"] == "test_policy"
+    assert data["policy"] == "Test Policy"
     assert data["title"] == "Test Policy"
-    assert len(data["includes"]) == 2
+    assert data["version"] == "v1.0"
+    assert data["controls_dir"] == "test_policy"
+    assert len(data["levels"]) == 3
+    assert data["levels"][0]["id"] == "high"
 
 
 def test_convert_to_control_requirements():

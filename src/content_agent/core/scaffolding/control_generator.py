@@ -49,13 +49,15 @@ class ControlGenerator:
         nested_by_section: bool = False,  # Deprecated, kept for compatibility
         source_document: str | None = None,
         description: str | None = None,
+        version: str | None = None,
+        levels: list[str] | None = None,
     ) -> ControlGenerationResult:
         """Generate control file structure with individual requirement files.
 
         Creates flat structure as required by ComplianceAsCode:
         - controls/<policy_id>/req1.yml
         - controls/<policy_id>/req2.yml
-        - controls/<policy_id>.yml (parent with includes)
+        - controls/<policy_id>.yml (parent with controls_dir reference)
 
         Args:
             policy_id: Policy identifier
@@ -65,6 +67,8 @@ class ControlGenerator:
             nested_by_section: Deprecated, always uses flat structure
             source_document: Source document path or URL
             description: Optional policy description
+            version: Optional version string (e.g., 'v3r1')
+            levels: Optional list of compliance levels (e.g., ['high', 'medium', 'low'])
 
         Returns:
             ControlGenerationResult with file paths and status
@@ -122,8 +126,10 @@ class ControlGenerator:
                 policy_title=policy_title,
                 requirement_files=requirement_files,
                 output_path=parent_file_path,
-                source_document=source_document or "Unknown",
+                source_document=source_document,
                 description=description,
+                version=version,
+                levels=levels,
             )
 
             if not parent_success:
@@ -242,36 +248,56 @@ class ControlGenerator:
         output_path: Path,
         description: str | None = None,
         source_document: str | None = None,
+        version: str | None = None,
+        levels: list[str] | None = None,
     ) -> bool:
-        """Generate parent control file with includes.
+        """Generate parent control file in ComplianceAsCode format.
 
-        Generates a parent control file that includes all individual requirement
-        files using flat structure (no subdirectories).
+        Generates a parent control file that references the controls directory
+        containing individual requirement files.
 
         Args:
             policy_id: Policy identifier
             policy_title: Policy title
-            requirement_files: List of requirement filenames (flat structure)
+            requirement_files: List of requirement filenames (not used, kept for compatibility)
             output_path: Path to write parent file
             description: Optional policy description
             source_document: Optional source document path/URL
+            version: Optional version string (e.g., 'v3r1')
+            levels: Optional list of compliance levels (e.g., ['high', 'medium', 'low'])
 
         Returns:
             True if successful, False otherwise
         """
         try:
-            # Create parent control file content
+            # Create parent control file content in ComplianceAsCode format
             content = {
-                "id": policy_id,
+                "policy": policy_title,
                 "title": policy_title,
-                "description": description or f"Control framework for {policy_title}",
+                "id": policy_id,
             }
 
-            if source_document:
-                content["source_document"] = source_document
+            # Add optional version
+            if version:
+                content["version"] = version
 
-            # Add includes
-            content["includes"] = requirement_files
+            # Add source
+            if source_document:
+                content["source"] = source_document
+
+            # Add controls_dir (references the directory with individual files)
+            content["controls_dir"] = policy_id
+
+            # Add levels
+            if levels:
+                content["levels"] = [{"id": level} for level in levels]
+            else:
+                # Default levels
+                content["levels"] = [
+                    {"id": "high"},
+                    {"id": "medium"},
+                    {"id": "low"},
+                ]
 
             # Write YAML file
             with open(output_path, "w") as f:
@@ -281,6 +307,7 @@ class ControlGenerator:
                     default_flow_style=False,
                     sort_keys=False,
                     allow_unicode=True,
+                    indent=4,
                 )
 
             logger.info(f"Created parent control file: {output_path}")
