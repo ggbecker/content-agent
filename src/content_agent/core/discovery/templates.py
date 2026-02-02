@@ -2,7 +2,6 @@
 
 import logging
 from pathlib import Path
-from typing import List, Optional
 
 from content_agent.core.integration import get_content_repository
 from content_agent.models import TemplateParameter, TemplateSchema, TemplateSummary
@@ -17,7 +16,7 @@ class TemplateDiscovery:
         """Initialize template discovery."""
         self.content_repo = get_content_repository()
 
-    def list_templates(self) -> List[TemplateSummary]:
+    def list_templates(self) -> list[TemplateSummary]:
         """List all available templates.
 
         Returns:
@@ -48,7 +47,7 @@ class TemplateDiscovery:
         logger.info(f"Found {len(templates)} templates")
         return templates
 
-    def get_template_schema(self, template_name: str) -> Optional[TemplateSchema]:
+    def get_template_schema(self, template_name: str) -> TemplateSchema | None:
         """Get schema for a template.
 
         Args:
@@ -94,7 +93,7 @@ class TemplateDiscovery:
         logger.debug(f"Loaded schema for template {template_name}")
         return schema
 
-    def _extract_description(self, template_dir: Path) -> Optional[str]:
+    def _extract_description(self, template_dir: Path) -> str | None:
         """Extract template description.
 
         Args:
@@ -117,7 +116,7 @@ class TemplateDiscovery:
 
         return None
 
-    def _guess_category(self, template_name: str) -> Optional[str]:
+    def _guess_category(self, template_name: str) -> str | None:
         """Guess template category from name.
 
         Args:
@@ -142,7 +141,7 @@ class TemplateDiscovery:
 
         return None
 
-    def _extract_parameters_from_config(self, config_file: Path) -> List[TemplateParameter]:
+    def _extract_parameters_from_config(self, config_file: Path) -> list[TemplateParameter]:
         """Extract parameters from template config file.
 
         Args:
@@ -155,7 +154,7 @@ class TemplateDiscovery:
         # Full implementation would parse template.yml format
         return []
 
-    def _extract_parameters_from_csv(self, csv_file: Path) -> List[TemplateParameter]:
+    def _extract_parameters_from_csv(self, csv_file: Path) -> list[TemplateParameter]:
         """Extract parameters from CSV file.
 
         Args:
@@ -169,7 +168,7 @@ class TemplateDiscovery:
         parameters = []
 
         try:
-            with open(csv_file, "r") as f:
+            with open(csv_file) as f:
                 reader = csv.DictReader(f)
                 # CSV format varies by template, use first row as example
                 # Most templates have columns like: rule_id, param1, param2, ...
@@ -190,7 +189,7 @@ class TemplateDiscovery:
 
         return parameters
 
-    def _detect_basic_parameters(self, template_dir: Path) -> List[TemplateParameter]:
+    def _detect_basic_parameters(self, template_dir: Path) -> list[TemplateParameter]:
         """Detect basic parameters from template directory.
 
         Args:
@@ -209,7 +208,7 @@ class TemplateDiscovery:
             )
         ]
 
-    def _get_example_usage(self, template_dir: Path) -> Optional[dict]:
+    def _get_example_usage(self, template_dir: Path) -> dict | None:
         """Get example usage for template.
 
         Args:
@@ -224,7 +223,7 @@ class TemplateDiscovery:
             import csv
 
             try:
-                with open(csv_files[0], "r") as f:
+                with open(csv_files[0]) as f:
                     reader = csv.DictReader(f)
                     # Get first data row as example
                     for row in reader:
@@ -237,7 +236,7 @@ class TemplateDiscovery:
         return None
 
 
-def list_templates() -> List[TemplateSummary]:
+def list_templates() -> list[TemplateSummary]:
     """List all available templates.
 
     Returns:
@@ -247,7 +246,7 @@ def list_templates() -> List[TemplateSummary]:
     return discovery.list_templates()
 
 
-def get_template_schema(template_name: str) -> Optional[TemplateSchema]:
+def get_template_schema(template_name: str) -> TemplateSchema | None:
     """Get schema for a template.
 
     Args:

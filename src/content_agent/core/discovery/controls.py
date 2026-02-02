@@ -1,8 +1,6 @@
 """Control framework discovery implementation."""
 
 import logging
-from pathlib import Path
-from typing import List
 
 from content_agent.core.integration import get_content_repository
 
@@ -16,7 +14,7 @@ class ControlDiscovery:
         """Initialize control discovery."""
         self.content_repo = get_content_repository()
 
-    def list_controls(self) -> List[str]:
+    def list_controls(self) -> list[str]:
         """List available control frameworks.
 
         Returns:
@@ -37,7 +35,7 @@ class ControlDiscovery:
         return controls
 
 
-def list_controls() -> List[str]:
+def list_controls() -> list[str]:
     """List available control frameworks.
 
     Returns:

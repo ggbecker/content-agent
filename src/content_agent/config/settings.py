@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from typing import List, Literal, Optional
+from typing import Literal
 
 import yaml
 from pydantic import Field
@@ -36,7 +36,7 @@ class HttpSettings(BaseSettings):
     host: str = Field(default="127.0.0.1", description="HTTP host")
     port: int = Field(default=8080, description="HTTP port")
     cors_enabled: bool = Field(default=False, description="Enable CORS")
-    cors_origins: List[str] = Field(default=["*"], description="Allowed CORS origins")
+    cors_origins: list[str] = Field(default=["*"], description="Allowed CORS origins")
 
     model_config = SettingsConfigDict(env_prefix="CONTENT_AGENT_SERVER__HTTP__")
 
@@ -122,7 +122,7 @@ class LoggingSettings(BaseSettings):
         default="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         description="Log format",
     )
-    file: Optional[Path] = Field(
+    file: Path | None = Field(
         default=Path.home() / ".content-agent" / "server.log",
         description="Log file path",
     )
@@ -154,13 +154,13 @@ class Settings(BaseSettings):
         Returns:
             Settings instance
         """
-        with open(yaml_path, "r") as f:
+        with open(yaml_path) as f:
             config_data = yaml.safe_load(f)
 
         return cls(**config_data)
 
     @classmethod
-    def load(cls, config_file: Optional[Path] = None) -> "Settings":
+    def load(cls, config_file: Path | None = None) -> "Settings":
         """Load settings from defaults, config file, and environment.
 
         Priority (highest to lowest):
@@ -176,12 +176,12 @@ class Settings(BaseSettings):
         """
         # Start with defaults from defaults.yaml
         defaults_path = Path(__file__).parent / "defaults.yaml"
-        with open(defaults_path, "r") as f:
+        with open(defaults_path) as f:
             config_data = yaml.safe_load(f)
 
         # Override with user config file if provided
         if config_file and config_file.exists():
-            with open(config_file, "r") as f:
+            with open(config_file) as f:
                 user_config = yaml.safe_load(f)
                 config_data = _merge_dicts(config_data, user_config)
 
@@ -267,7 +267,7 @@ def _is_env_var_set(*keys: str) -> bool:
 
 
 # Global settings instance (initialized by main)
-_settings: Optional[Settings] = None
+_settings: Settings | None = None
 
 
 def get_settings() -> Settings:
@@ -284,7 +284,7 @@ def get_settings() -> Settings:
     return _settings
 
 
-def initialize_settings(config_file: Optional[Path] = None) -> Settings:
+def initialize_settings(config_file: Path | None = None) -> Settings:
     """Initialize global settings.
 
     Args:

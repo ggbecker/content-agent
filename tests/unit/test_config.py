@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
-import yaml
+from pydantic import ValidationError
 
 from content_agent.config.settings import (
     BuildSettings,
@@ -59,10 +59,10 @@ class TestBuildSettings:
         assert settings.max_concurrent_builds == 5
 
         # Invalid values should raise
-        with pytest.raises(Exception):  # Pydantic validation error
+        with pytest.raises(ValidationError):
             BuildSettings(max_concurrent_builds=0)  # ge=1
 
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             BuildSettings(max_concurrent_builds=100)  # le=10
 
 
@@ -87,7 +87,7 @@ class TestTestingSettings:
         assert settings2.backend == "docker"
 
         # Invalid backend should raise
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             TestingSettings(backend="invalid")
 
 

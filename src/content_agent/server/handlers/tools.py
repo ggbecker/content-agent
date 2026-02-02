@@ -2,7 +2,7 @@
 
 import json
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from content_agent.core import discovery, scaffolding
 
@@ -305,7 +305,7 @@ TOOLS = [
 ]
 
 
-async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
+async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
     """Handle tool call.
 
     Args:
@@ -492,7 +492,7 @@ async def handle_tool_call(name: str, arguments: Dict[str, Any]) -> List[Any]:
         return [{"type": "text", "text": error_msg}]
 
 
-def list_tools() -> List[Dict[str, Any]]:
+def list_tools() -> list[dict[str, Any]]:
     """List available tools.
 
     Returns:

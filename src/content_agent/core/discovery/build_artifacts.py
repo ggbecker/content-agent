@@ -5,10 +5,9 @@ These files contain the final content after Jinja template processing and variab
 """
 
 import logging
+import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
-import xml.etree.ElementTree as ET
 
 from content_agent.core.integration import get_content_repository
 from content_agent.models import DatastreamInfo, RenderedRule, RenderSearchResult
@@ -23,7 +22,7 @@ class BuildArtifactsDiscovery:
         """Initialize build artifacts discovery."""
         self.content_repo = get_content_repository()
 
-    def list_built_products(self) -> List[str]:
+    def list_built_products(self) -> list[str]:
         """List products that have been built and have artifacts available.
 
         Returns:
@@ -46,7 +45,7 @@ class BuildArtifactsDiscovery:
         logger.info(f"Found {len(built_products)} built products")
         return sorted(built_products)
 
-    def get_rendered_rule(self, product: str, rule_id: str) -> Optional[RenderedRule]:
+    def get_rendered_rule(self, product: str, rule_id: str) -> RenderedRule | None:
         """Get rendered rule content from build directory.
 
         Args:
@@ -77,7 +76,7 @@ class BuildArtifactsDiscovery:
             return None
 
         try:
-            with open(rule_json_path, "r") as f:
+            with open(rule_json_path) as f:
                 rule_data = json.load(f)
 
             # Convert JSON back to YAML-like format for consistency
@@ -128,7 +127,7 @@ class BuildArtifactsDiscovery:
             build_path=str(rule_json_path.parent.relative_to(self.content_repo.path)),
         )
 
-    def get_datastream_info(self, product: str) -> Optional[DatastreamInfo]:
+    def get_datastream_info(self, product: str) -> DatastreamInfo | None:
         """Get information about a built datastream.
 
         Args:
@@ -198,8 +197,8 @@ class BuildArtifactsDiscovery:
         )
 
     def search_rendered_content(
-        self, query: str, product: Optional[str] = None, limit: int = 50
-    ) -> List[RenderSearchResult]:
+        self, query: str, product: str | None = None, limit: int = 50
+    ) -> list[RenderSearchResult]:
         """Search in rendered build artifacts.
 
         Args:
@@ -360,7 +359,7 @@ class BuildArtifactsDiscovery:
 
 
 # Module-level functions for convenient access
-def list_built_products() -> List[str]:
+def list_built_products() -> list[str]:
     """List products that have been built.
 
     Returns:
@@ -370,7 +369,7 @@ def list_built_products() -> List[str]:
     return discovery.list_built_products()
 
 
-def get_rendered_rule(product: str, rule_id: str) -> Optional[RenderedRule]:
+def get_rendered_rule(product: str, rule_id: str) -> RenderedRule | None:
     """Get rendered rule content.
 
     Args:
@@ -384,7 +383,7 @@ def get_rendered_rule(product: str, rule_id: str) -> Optional[RenderedRule]:
     return discovery.get_rendered_rule(product, rule_id)
 
 
-def get_datastream_info(product: str) -> Optional[DatastreamInfo]:
+def get_datastream_info(product: str) -> DatastreamInfo | None:
     """Get datastream information.
 
     Args:
@@ -398,8 +397,8 @@ def get_datastream_info(product: str) -> Optional[DatastreamInfo]:
 
 
 def search_rendered_content(
-    query: str, product: Optional[str] = None, limit: int = 50
-) -> List[RenderSearchResult]:
+    query: str, product: str | None = None, limit: int = 50
+) -> list[RenderSearchResult]:
     """Search rendered content.
 
     Args:

@@ -2,12 +2,11 @@
 
 import logging
 from pathlib import Path
-from typing import List, Optional
 
 import yaml
 
 from content_agent.core.integration import get_content_repository
-from content_agent.models import ScaffoldingResult, ValidationResult
+from content_agent.models import ScaffoldingResult
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +25,8 @@ class RuleGenerator:
         description: str,
         severity: str,
         product: str,
-        location: Optional[str] = None,
-        rationale: Optional[str] = None,
+        location: str | None = None,
+        rationale: str | None = None,
     ) -> ScaffoldingResult:
         """Generate basic rule structure.
 
@@ -132,7 +131,7 @@ class RuleGenerator:
 
         return self.content_repo.path / base_path / rule_id
 
-    def _create_directory_structure(self, rule_dir: Path) -> List[str]:
+    def _create_directory_structure(self, rule_dir: Path) -> list[str]:
         """Create rule directory structure.
 
         Args:
@@ -168,7 +167,7 @@ class RuleGenerator:
         description: str,
         severity: str,
         product: str,
-        rationale: Optional[str] = None,
+        rationale: str | None = None,
     ) -> str:
         """Generate rule.yml content.
 
@@ -229,8 +228,8 @@ def generate_rule_boilerplate(
     description: str,
     severity: str,
     product: str,
-    location: Optional[str] = None,
-    rationale: Optional[str] = None,
+    location: str | None = None,
+    rationale: str | None = None,
 ) -> ScaffoldingResult:
     """Generate basic rule structure.
 

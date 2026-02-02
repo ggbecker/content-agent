@@ -5,7 +5,7 @@ the content repository has been added to the Python path.
 """
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -183,7 +183,7 @@ class SSGModules:
 
 
 # Global SSG modules instance
-_ssg_modules: Optional[SSGModules] = None
+_ssg_modules: SSGModules | None = None
 
 
 def get_ssg_modules() -> SSGModules:

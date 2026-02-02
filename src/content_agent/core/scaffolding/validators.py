@@ -2,7 +2,6 @@
 
 import logging
 import re
-from typing import List
 
 import yaml
 
@@ -48,9 +47,9 @@ class RuleValidator:
         Returns:
             ValidationResult
         """
-        errors: List[ValidationError] = []
-        warnings: List[ValidationError] = []
-        fixes_applied: List[str] = []
+        errors: list[ValidationError] = []
+        warnings: list[ValidationError] = []
+        fixes_applied: list[str] = []
 
         try:
             # Parse YAML
@@ -116,7 +115,7 @@ class RuleValidator:
             fixes_applied=fixes_applied,
         )
 
-    def _check_required_fields(self, data: dict) -> List[ValidationError]:
+    def _check_required_fields(self, data: dict) -> list[ValidationError]:
         """Check for required fields.
 
         Args:
@@ -147,7 +146,7 @@ class RuleValidator:
 
         return errors
 
-    def _check_recommended_fields(self, data: dict) -> List[ValidationError]:
+    def _check_recommended_fields(self, data: dict) -> list[ValidationError]:
         """Check for recommended fields.
 
         Args:
@@ -170,7 +169,7 @@ class RuleValidator:
 
         return warnings
 
-    def _validate_severity(self, severity: str) -> List[ValidationError]:
+    def _validate_severity(self, severity: str) -> list[ValidationError]:
         """Validate severity value.
 
         Args:
@@ -192,7 +191,7 @@ class RuleValidator:
 
         return errors
 
-    def _validate_references(self, references: dict) -> List[ValidationError]:
+    def _validate_references(self, references: dict) -> list[ValidationError]:
         """Validate reference format.
 
         Args:
@@ -232,7 +231,7 @@ class RuleValidator:
         pattern = r"^[A-Z]{2}-\d+(\(\d+\))?$"
         return bool(re.match(pattern, ref))
 
-    def _validate_identifiers(self, identifiers: dict) -> List[ValidationError]:
+    def _validate_identifiers(self, identifiers: dict) -> list[ValidationError]:
         """Validate identifier format.
 
         Args:
@@ -272,7 +271,7 @@ class RuleValidator:
         pattern = r"^CCE-\d{5}-\d$"
         return bool(re.match(pattern, cce))
 
-    def _check_common_mistakes(self, data: dict) -> List[ValidationError]:
+    def _check_common_mistakes(self, data: dict) -> list[ValidationError]:
         """Check for common mistakes.
 
         Args:

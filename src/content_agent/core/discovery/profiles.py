@@ -2,9 +2,6 @@
 
 import logging
 from pathlib import Path
-from typing import List, Optional
-
-import yaml
 
 from content_agent.core.integration import get_content_repository
 from content_agent.models import ProfileDetails, ProfileSummary
@@ -19,7 +16,7 @@ class ProfileDiscovery:
         """Initialize profile discovery."""
         self.content_repo = get_content_repository()
 
-    def list_profiles(self, product: Optional[str] = None) -> List[ProfileSummary]:
+    def list_profiles(self, product: str | None = None) -> list[ProfileSummary]:
         """List profiles for a product or all products.
 
         Args:
@@ -65,7 +62,7 @@ class ProfileDiscovery:
         logger.info(f"Found {len(profiles)} profiles")
         return profiles
 
-    def get_profile_details(self, profile_id: str, product: str) -> Optional[ProfileDetails]:
+    def get_profile_details(self, profile_id: str, product: str) -> ProfileDetails | None:
         """Get detailed information about a profile.
 
         Args:
@@ -86,7 +83,7 @@ class ProfileDiscovery:
             return None
 
         try:
-            with open(profile_path, "r") as f:
+            with open(profile_path) as f:
                 content = f.read()
 
             # Parse profile format (YAML-like but custom)
@@ -125,7 +122,7 @@ class ProfileDiscovery:
 
     def _load_profile_summary(
         self, profile_id: str, product: str, profile_path: Path
-    ) -> Optional[ProfileSummary]:
+    ) -> ProfileSummary | None:
         """Load profile summary.
 
         Args:
@@ -137,7 +134,7 @@ class ProfileDiscovery:
             ProfileSummary or None
         """
         try:
-            with open(profile_path, "r") as f:
+            with open(profile_path) as f:
                 content = f.read()
 
             data = self._parse_profile(content)
@@ -225,7 +222,7 @@ class ProfileDiscovery:
         return data
 
 
-def list_profiles(product: Optional[str] = None) -> List[ProfileSummary]:
+def list_profiles(product: str | None = None) -> list[ProfileSummary]:
     """List profiles for a product or all products.
 
     Args:
@@ -238,7 +235,7 @@ def list_profiles(product: Optional[str] = None) -> List[ProfileSummary]:
     return discovery.list_profiles(product)
 
 
-def get_profile_details(profile_id: str, product: str) -> Optional[ProfileDetails]:
+def get_profile_details(profile_id: str, product: str) -> ProfileDetails | None:
     """Get detailed information about a profile.
 
     Args:

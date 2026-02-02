@@ -1,7 +1,7 @@
 """Rule data models."""
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -12,8 +12,8 @@ class RuleSearchResult(BaseModel):
     rule_id: str = Field(..., description="Rule identifier")
     title: str = Field(..., description="Rule title")
     severity: str = Field(..., description="Rule severity (low, medium, high, unknown)")
-    description: Optional[str] = Field(None, description="Short description")
-    products: List[str] = Field(default_factory=list, description="Products this rule applies to")
+    description: str | None = Field(None, description="Short description")
+    products: list[str] = Field(default_factory=list, description="Products this rule applies to")
     file_path: str = Field(..., description="Path to rule.yml file")
 
     class Config:
@@ -34,10 +34,10 @@ class RuleSearchResult(BaseModel):
 class RuleIdentifiers(BaseModel):
     """Rule identifiers."""
 
-    cce: Optional[str] = Field(None, description="CCE identifier")
-    cis: Optional[List[str]] = Field(None, description="CIS benchmark references")
-    nist: Optional[List[str]] = Field(None, description="NIST control references")
-    stigid: Optional[str] = Field(None, description="STIG identifier")
+    cce: str | None = Field(None, description="CCE identifier")
+    cis: list[str] | None = Field(None, description="CIS benchmark references")
+    nist: list[str] | None = Field(None, description="NIST control references")
+    stigid: str | None = Field(None, description="STIG identifier")
 
     class Config:
         """Pydantic config."""
@@ -48,13 +48,13 @@ class RuleIdentifiers(BaseModel):
 class RuleReferences(BaseModel):
     """Rule references to compliance frameworks."""
 
-    nist: List[str] = Field(default_factory=list, description="NIST SP 800-53 references")
-    cis: List[str] = Field(default_factory=list, description="CIS Benchmark references")
-    cui: List[str] = Field(default_factory=list, description="CUI references")
-    disa: List[str] = Field(default_factory=list, description="DISA STIG references")
-    isa62443: List[str] = Field(default_factory=list, description="ISA-62443 references")
-    pcidss: List[str] = Field(default_factory=list, description="PCI-DSS references")
-    hipaa: List[str] = Field(default_factory=list, description="HIPAA references")
+    nist: list[str] = Field(default_factory=list, description="NIST SP 800-53 references")
+    cis: list[str] = Field(default_factory=list, description="CIS Benchmark references")
+    cui: list[str] = Field(default_factory=list, description="CUI references")
+    disa: list[str] = Field(default_factory=list, description="DISA STIG references")
+    isa62443: list[str] = Field(default_factory=list, description="ISA-62443 references")
+    pcidss: list[str] = Field(default_factory=list, description="PCI-DSS references")
+    hipaa: list[str] = Field(default_factory=list, description="HIPAA references")
 
     class Config:
         """Pydantic config."""
@@ -66,20 +66,20 @@ class RuleRenderedContent(BaseModel):
     """Rendered content for a rule (from build artifacts)."""
 
     product: str = Field(..., description="Product this was rendered for")
-    rendered_yaml: Optional[str] = Field(
+    rendered_yaml: str | None = Field(
         None, description="Fully rendered YAML (variables expanded)"
     )
-    rendered_oval: Optional[str] = Field(None, description="Rendered OVAL check content")
-    rendered_remediations: Dict[str, str] = Field(
+    rendered_oval: str | None = Field(None, description="Rendered OVAL check content")
+    rendered_remediations: dict[str, str] = Field(
         default_factory=dict, description="Rendered remediation scripts by type"
     )
     build_path: str = Field(..., description="Path to build artifact")
-    build_time: Optional[datetime] = Field(None, description="When this was built")
+    build_time: datetime | None = Field(None, description="When this was built")
 
     # Metadata (always included, even in summary mode)
     yaml_size: int = Field(default=0, description="Size of rendered YAML in bytes")
     oval_size: int = Field(default=0, description="Size of rendered OVAL in bytes")
-    remediation_sizes: Dict[str, int] = Field(
+    remediation_sizes: dict[str, int] = Field(
         default_factory=dict, description="Sizes of remediations by type"
     )
     has_yaml: bool = Field(default=False, description="Whether YAML is available")
@@ -95,7 +95,7 @@ class RuleDetails(BaseModel):
     rule_id: str = Field(..., description="Rule identifier")
     title: str = Field(..., description="Rule title")
     description: str = Field(..., description="Full description")
-    rationale: Optional[str] = Field(None, description="Rationale for the rule")
+    rationale: str | None = Field(None, description="Rationale for the rule")
     severity: str = Field(..., description="Severity level")
     identifiers: RuleIdentifiers = Field(
         default_factory=RuleIdentifiers, description="Rule identifiers"
@@ -103,23 +103,23 @@ class RuleDetails(BaseModel):
     references: RuleReferences = Field(
         default_factory=RuleReferences, description="Compliance framework references"
     )
-    products: List[str] = Field(default_factory=list, description="Applicable products")
-    platforms: List[str] = Field(default_factory=list, description="Applicable platforms")
-    remediations: Dict[str, bool] = Field(
+    products: list[str] = Field(default_factory=list, description="Applicable products")
+    platforms: list[str] = Field(default_factory=list, description="Applicable platforms")
+    remediations: dict[str, bool] = Field(
         default_factory=dict,
         description="Available remediations (bash, ansible, anaconda, etc.)",
     )
-    checks: Dict[str, bool] = Field(
+    checks: dict[str, bool] = Field(
         default_factory=dict, description="Available checks (oval, etc.)"
     )
-    test_scenarios: List[str] = Field(default_factory=list, description="Available test scenarios")
+    test_scenarios: list[str] = Field(default_factory=list, description="Available test scenarios")
     file_path: str = Field(..., description="Path to rule.yml file")
     rule_dir: str = Field(..., description="Path to rule directory")
-    last_modified: Optional[datetime] = Field(None, description="Last modification timestamp")
-    template: Optional[Dict[str, Any]] = Field(
+    last_modified: datetime | None = Field(None, description="Last modification timestamp")
+    template: dict[str, Any] | None = Field(
         None, description="Template information if rule uses a template"
     )
-    rendered: Optional[Dict[str, RuleRenderedContent]] = Field(
+    rendered: dict[str, RuleRenderedContent] | None = Field(
         None,
         description="Rendered content from build artifacts, keyed by product. "
         "Only populated if include_rendered=True and builds exist.",
@@ -156,17 +156,17 @@ class ValidationError(BaseModel):
 
     field: str = Field(..., description="Field or location of error")
     error: str = Field(..., description="Error message")
-    line: Optional[int] = Field(None, description="Line number if applicable")
-    suggestion: Optional[str] = Field(None, description="Suggested fix")
+    line: int | None = Field(None, description="Line number if applicable")
+    suggestion: str | None = Field(None, description="Suggested fix")
 
 
 class ValidationResult(BaseModel):
     """Result of rule validation."""
 
     valid: bool = Field(..., description="Whether validation passed")
-    errors: List[ValidationError] = Field(default_factory=list, description="Validation errors")
-    warnings: List[ValidationError] = Field(default_factory=list, description="Validation warnings")
-    fixes_applied: List[str] = Field(
+    errors: list[ValidationError] = Field(default_factory=list, description="Validation errors")
+    warnings: list[ValidationError] = Field(default_factory=list, description="Validation warnings")
+    fixes_applied: list[str] = Field(
         default_factory=list, description="Auto-fixes that were applied"
     )
 

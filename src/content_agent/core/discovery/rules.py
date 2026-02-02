@@ -12,7 +12,6 @@ See docs/COMPLIANCEASCODE_REFERENCE.md for more details.
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
 
 import yaml
 
@@ -34,15 +33,15 @@ class RuleDiscovery:
     def __init__(self) -> None:
         """Initialize rule discovery."""
         self.content_repo = get_content_repository()
-        self._rule_cache: Optional[Dict[str, Path]] = None
+        self._rule_cache: dict[str, Path] | None = None
 
     def search_rules(
         self,
-        query: Optional[str] = None,
-        product: Optional[str] = None,
-        severity: Optional[str] = None,
+        query: str | None = None,
+        product: str | None = None,
+        severity: str | None = None,
         limit: int = 50,
-    ) -> List[RuleSearchResult]:
+    ) -> list[RuleSearchResult]:
         """Search for rules matching criteria.
 
         Args:
@@ -99,9 +98,9 @@ class RuleDiscovery:
         self,
         rule_id: str,
         include_rendered: bool = True,
-        product: Optional[str] = None,
+        product: str | None = None,
         rendered_detail: str = "metadata",
-    ) -> Optional[RuleDetails]:
+    ) -> RuleDetails | None:
         """Get detailed information about a rule.
 
         Args:
@@ -131,7 +130,7 @@ class RuleDiscovery:
 
         try:
             # Load YAML with Jinja2 templates
-            with open(rule_path, "r") as f:
+            with open(rule_path) as f:
                 content = f.read()
                 data = yaml.load(content, Loader=yaml.FullLoader)
 
@@ -224,7 +223,7 @@ class RuleDiscovery:
 
         logger.info(f"Indexed {len(self._rule_cache)} rules")
 
-    def _load_search_result(self, rule_id: str, rule_path: Path) -> Optional[RuleSearchResult]:
+    def _load_search_result(self, rule_id: str, rule_path: Path) -> RuleSearchResult | None:
         """Load rule as search result.
 
         Args:
@@ -237,7 +236,7 @@ class RuleDiscovery:
         try:
             # Load YAML with Jinja2 templates - use FullLoader to be more lenient
             # This will leave Jinja2 templates as strings in the YAML
-            with open(rule_path, "r") as f:
+            with open(rule_path) as f:
                 content = f.read()
                 # Try to load YAML - if it has Jinja2 templates, they'll be treated as strings
                 data = yaml.load(content, Loader=yaml.FullLoader)
@@ -257,7 +256,7 @@ class RuleDiscovery:
             logger.debug(f"Failed to load search result for {rule_id}: {e}")
             return None
 
-    def _extract_products_from_identifiers(self, data: dict) -> List[str]:
+    def _extract_products_from_identifiers(self, data: dict) -> list[str]:
         """Extract product list from identifiers and references.
 
         Args:
@@ -282,7 +281,7 @@ class RuleDiscovery:
                 product = key.split("@")[1]
                 products.add(product)
 
-        return sorted(list(products))
+        return sorted(products)
 
     def _matches_query(self, result: RuleSearchResult, query: str) -> bool:
         """Check if result matches search query.
@@ -299,7 +298,7 @@ class RuleDiscovery:
         return query in searchable
 
     def _matches_filters(
-        self, result: RuleSearchResult, product: Optional[str], severity: Optional[str]
+        self, result: RuleSearchResult, product: str | None, severity: str | None
     ) -> bool:
         """Check if result matches filters.
 
@@ -381,7 +380,7 @@ class RuleDiscovery:
             },
         )
 
-    def _detect_remediations(self, rule_dir: Path) -> Dict[str, bool]:
+    def _detect_remediations(self, rule_dir: Path) -> dict[str, bool]:
         """Detect available remediations for a rule.
 
         Args:
@@ -408,7 +407,7 @@ class RuleDiscovery:
 
         return remediations
 
-    def _detect_checks(self, rule_dir: Path) -> Dict[str, bool]:
+    def _detect_checks(self, rule_dir: Path) -> dict[str, bool]:
         """Detect available checks for a rule.
 
         Args:
@@ -427,7 +426,7 @@ class RuleDiscovery:
 
         return checks
 
-    def _find_test_scenarios(self, rule_dir: Path) -> List[str]:
+    def _find_test_scenarios(self, rule_dir: Path) -> list[str]:
         """Find test scenarios for a rule.
 
         Args:
@@ -449,9 +448,9 @@ class RuleDiscovery:
     def _get_rendered_content(
         self,
         rule_id: str,
-        product_filter: Optional[str] = None,
+        product_filter: str | None = None,
         detail_level: str = "metadata",
-    ) -> Optional[Dict[str, RuleRenderedContent]]:
+    ) -> dict[str, RuleRenderedContent] | None:
         """Get rendered content for a rule from build artifacts.
 
         Args:
@@ -536,11 +535,11 @@ class RuleDiscovery:
 
 
 def search_rules(
-    query: Optional[str] = None,
-    product: Optional[str] = None,
-    severity: Optional[str] = None,
+    query: str | None = None,
+    product: str | None = None,
+    severity: str | None = None,
     limit: int = 50,
-) -> List[RuleSearchResult]:
+) -> list[RuleSearchResult]:
     """Search for rules matching criteria.
 
     Args:
@@ -559,9 +558,9 @@ def search_rules(
 def get_rule_details(
     rule_id: str,
     include_rendered: bool = True,
-    product: Optional[str] = None,
+    product: str | None = None,
     rendered_detail: str = "metadata",
-) -> Optional[RuleDetails]:
+) -> RuleDetails | None:
     """Get detailed information about a rule.
 
     Args:

@@ -1,7 +1,6 @@
 """Product data models."""
 
 from datetime import datetime
-from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -12,8 +11,8 @@ class ProductSummary(BaseModel):
     product_id: str = Field(..., description="Product identifier (e.g., rhel9, fedora, ocp4)")
     name: str = Field(..., description="Human-readable product name")
     product_type: str = Field(..., description="Product type (e.g., rhel, fedora, ocp)")
-    version: Optional[str] = Field(None, description="Product version if applicable")
-    description: Optional[str] = Field(None, description="Product description")
+    version: str | None = Field(None, description="Product version if applicable")
+    description: str | None = Field(None, description="Product description")
 
     class Config:
         """Pydantic config."""
@@ -44,14 +43,14 @@ class ProductDetails(BaseModel):
     product_id: str = Field(..., description="Product identifier")
     name: str = Field(..., description="Human-readable product name")
     product_type: str = Field(..., description="Product type")
-    version: Optional[str] = Field(None, description="Product version")
-    description: Optional[str] = Field(None, description="Product description")
-    profiles: List[str] = Field(default_factory=list, description="List of available profile IDs")
+    version: str | None = Field(None, description="Product version")
+    description: str | None = Field(None, description="Product description")
+    profiles: list[str] = Field(default_factory=list, description="List of available profile IDs")
     benchmark_root: str = Field(..., description="Path to product benchmark directory")
     product_dir: str = Field(..., description="Path to product directory")
-    cpe: Optional[str] = Field(None, description="CPE identifier")
-    stats: Optional[ProductStats] = Field(None, description="Product statistics")
-    last_modified: Optional[datetime] = Field(None, description="Last modification timestamp")
+    cpe: str | None = Field(None, description="CPE identifier")
+    stats: ProductStats | None = Field(None, description="Product statistics")
+    last_modified: datetime | None = Field(None, description="Last modification timestamp")
 
     class Config:
         """Pydantic config."""

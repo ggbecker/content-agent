@@ -1,12 +1,12 @@
 """MCP prompt handlers (Phase 4)."""
 
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-def list_prompts() -> List[Dict[str, Any]]:
+def list_prompts() -> list[dict[str, Any]]:
     """List available prompts.
 
     Returns:
@@ -16,7 +16,7 @@ def list_prompts() -> List[Dict[str, Any]]:
     return []
 
 
-async def handle_prompt_get(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+async def handle_prompt_get(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
     """Handle prompt get request.
 
     Args:
@@ -30,4 +30,4 @@ async def handle_prompt_get(name: str, arguments: Dict[str, Any]) -> Dict[str, A
         ValueError: If prompt not found
     """
     # Phase 4 feature - placeholder
-    raise ValueError(f"Prompts not yet implemented (Phase 4 feature)")
+    raise ValueError("Prompts not yet implemented (Phase 4 feature)")

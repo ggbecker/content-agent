@@ -4,7 +4,6 @@ import asyncio
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
 
 import click
 
@@ -16,7 +15,7 @@ from content_agent.core.integration import (
 from content_agent.server import run_stdio_server
 
 
-def setup_logging(level: str, log_file: Optional[Path] = None) -> None:
+def setup_logging(level: str, log_file: Path | None = None) -> None:
     """Set up logging configuration.
 
     Args:
@@ -84,11 +83,11 @@ def setup_logging(level: str, log_file: Optional[Path] = None) -> None:
 )
 @click.version_option(version="0.1.0", prog_name="content-agent")
 def main(
-    config: Optional[Path],
-    content_repo: Optional[str],
+    config: Path | None,
+    content_repo: str | None,
     mode: str,
     log_level: str,
-    log_file: Optional[Path],
+    log_file: Path | None,
 ) -> None:
     """ComplianceAsCode/content MCP server.
 
@@ -156,7 +155,7 @@ def main(
             logger.info("Starting stdio server...")
             asyncio.run(run_stdio_server())
         else:
-            logger.error(f"HTTP mode not yet implemented (Phase 4)")
+            logger.error("HTTP mode not yet implemented (Phase 4)")
             sys.exit(1)
 
     except KeyboardInterrupt:

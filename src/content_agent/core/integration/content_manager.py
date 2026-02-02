@@ -4,7 +4,6 @@ import logging
 import shutil
 import sys
 from pathlib import Path
-from typing import Optional
 
 import git
 
@@ -16,7 +15,7 @@ logger = logging.getLogger(__name__)
 class ContentRepository:
     """Manages the ComplianceAsCode/content repository."""
 
-    def __init__(self, repo_path: Optional[Path] = None):
+    def __init__(self, repo_path: Path | None = None):
         """Initialize content repository manager.
 
         Args:
@@ -34,7 +33,7 @@ class ContentRepository:
             self._repo_path = Path(self.settings.content.repository).expanduser()
             self._is_managed = False
 
-        self._repo: Optional[git.Repo] = None
+        self._repo: git.Repo | None = None
         self._initialized = False
 
     @property
@@ -64,7 +63,7 @@ class ContentRepository:
         """
         return self._repo_path / "build"
 
-    def get_product_build_path(self, product: str) -> Optional[Path]:
+    def get_product_build_path(self, product: str) -> Path | None:
         """Get build path for a specific product.
 
         Args:
@@ -203,7 +202,7 @@ class ContentRepository:
             logger.error(f"Failed to update repository: {e}")
             raise RuntimeError(f"Failed to update repository: {e}") from e
 
-    def get_commit_info(self) -> Optional[dict]:
+    def get_commit_info(self) -> dict | None:
         """Get current commit information.
 
         Returns:
@@ -224,7 +223,7 @@ class ContentRepository:
             logger.warning(f"Failed to get commit info: {e}")
             return None
 
-    def get_ssg_version(self) -> Optional[str]:
+    def get_ssg_version(self) -> str | None:
         """Get SSG version from CMakeLists.txt.
 
         Returns:
@@ -249,7 +248,7 @@ class ContentRepository:
 
 
 # Global content repository instance
-_content_repo: Optional[ContentRepository] = None
+_content_repo: ContentRepository | None = None
 
 
 def get_content_repository() -> ContentRepository:
@@ -268,7 +267,7 @@ def get_content_repository() -> ContentRepository:
     return _content_repo
 
 
-def initialize_content_repository(repo_path: Optional[Path] = None) -> ContentRepository:
+def initialize_content_repository(repo_path: Path | None = None) -> ContentRepository:
     """Initialize the global content repository.
 
     Args:

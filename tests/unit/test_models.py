@@ -1,9 +1,6 @@
 """Unit tests for data models."""
 
 import json
-from datetime import datetime
-
-import pytest
 
 from content_agent.models import (
     ProductDetails,

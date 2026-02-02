@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from content_agent.config import initialize_settings
-from content_agent.core.integration import initialize_content_repository, initialize_ssg_modules
+from content_agent.core.integration import initialize_content_repository
 
 
 @pytest.fixture

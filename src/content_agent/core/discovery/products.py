@@ -2,7 +2,6 @@
 
 import logging
 from pathlib import Path
-from typing import List, Optional
 
 import yaml
 
@@ -19,9 +18,9 @@ class ProductDiscovery:
         """Initialize product discovery."""
         self.content_repo = get_content_repository()
         self.ssg = get_ssg_modules()
-        self._product_cache: Optional[dict] = None
+        self._product_cache: dict | None = None
 
-    def list_products(self) -> List[ProductSummary]:
+    def list_products(self) -> list[ProductSummary]:
         """List all available products.
 
         Returns:
@@ -54,7 +53,7 @@ class ProductDiscovery:
         logger.info(f"Found {len(products)} products")
         return products
 
-    def get_product_details(self, product_id: str) -> Optional[ProductDetails]:
+    def get_product_details(self, product_id: str) -> ProductDetails | None:
         """Get detailed information about a product.
 
         Args:
@@ -80,7 +79,7 @@ class ProductDiscovery:
         try:
             # Note: safe_load is appropriate here - product.yml files do not contain
             # Jinja2 macros per ComplianceAsCode ADR-0002 (Jinja2 Boundaries)
-            with open(product_yml, "r") as f:
+            with open(product_yml) as f:
                 data = yaml.safe_load(f)
 
             # Get profiles
@@ -112,7 +111,7 @@ class ProductDiscovery:
             logger.error(f"Failed to load product {product_id}: {e}")
             return None
 
-    def _load_product_summary(self, product_id: str, product_yml: Path) -> Optional[ProductSummary]:
+    def _load_product_summary(self, product_id: str, product_yml: Path) -> ProductSummary | None:
         """Load product summary from product.yml.
 
         Args:
@@ -125,7 +124,7 @@ class ProductDiscovery:
         try:
             # Note: safe_load is appropriate here - product.yml files do not contain
             # Jinja2 macros per ComplianceAsCode ADR-0002 (Jinja2 Boundaries)
-            with open(product_yml, "r") as f:
+            with open(product_yml) as f:
                 data = yaml.safe_load(f)
 
             return ProductSummary(
@@ -139,7 +138,7 @@ class ProductDiscovery:
             logger.warning(f"Failed to load product summary for {product_id}: {e}")
             return None
 
-    def _get_product_profiles(self, product_id: str) -> List[str]:
+    def _get_product_profiles(self, product_id: str) -> list[str]:
         """Get list of profile IDs for a product.
 
         Args:
@@ -160,7 +159,7 @@ class ProductDiscovery:
 
         return sorted(profile_ids)
 
-    def _calculate_product_stats(self, product_id: str) -> Optional[ProductStats]:
+    def _calculate_product_stats(self, product_id: str) -> ProductStats | None:
         """Calculate statistics for a product.
 
         Args:
@@ -188,7 +187,7 @@ class ProductDiscovery:
         return benchmark_root
 
 
-def list_products() -> List[ProductSummary]:
+def list_products() -> list[ProductSummary]:
     """List all available products.
 
     Returns:
@@ -198,7 +197,7 @@ def list_products() -> List[ProductSummary]:
     return discovery.list_products()
 
 
-def get_product_details(product_id: str) -> Optional[ProductDetails]:
+def get_product_details(product_id: str) -> ProductDetails | None:
     """Get detailed information about a product.
 
     Args:

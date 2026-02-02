@@ -2,7 +2,6 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -31,7 +30,7 @@ class BuildJobId(BaseModel):
     job_id: str = Field(..., description="Unique job identifier")
     job_type: BuildJobType = Field(..., description="Type of build job")
     product: str = Field(..., description="Product being built")
-    rule_id: Optional[str] = Field(None, description="Rule ID if building single rule")
+    rule_id: str | None = Field(None, description="Rule ID if building single rule")
     message: str = Field(..., description="Informational message")
 
     class Config:
@@ -54,7 +53,7 @@ class BuildArtifact(BaseModel):
     name: str = Field(..., description="Artifact filename")
     path: str = Field(..., description="Full path to artifact")
     type: str = Field(..., description="Artifact type (datastream, playbook, guide, etc.)")
-    size: Optional[int] = Field(None, description="File size in bytes")
+    size: int | None = Field(None, description="File size in bytes")
 
 
 class BuildStatus(BaseModel):
@@ -64,15 +63,15 @@ class BuildStatus(BaseModel):
     status: BuildJobStatus = Field(..., description="Current job status")
     job_type: BuildJobType = Field(..., description="Type of build job")
     product: str = Field(..., description="Product being built")
-    rule_id: Optional[str] = Field(None, description="Rule ID if building single rule")
+    rule_id: str | None = Field(None, description="Rule ID if building single rule")
     started_at: datetime = Field(..., description="When job started")
-    completed_at: Optional[datetime] = Field(None, description="When job completed")
-    duration_seconds: Optional[float] = Field(None, description="Job duration in seconds")
-    exit_code: Optional[int] = Field(None, description="Process exit code")
+    completed_at: datetime | None = Field(None, description="When job completed")
+    duration_seconds: float | None = Field(None, description="Job duration in seconds")
+    exit_code: int | None = Field(None, description="Process exit code")
     stdout: str = Field(default="", description="Standard output")
     stderr: str = Field(default="", description="Standard error")
-    artifacts: List[BuildArtifact] = Field(default_factory=list, description="Generated artifacts")
-    error_message: Optional[str] = Field(None, description="Error message if failed")
+    artifacts: list[BuildArtifact] = Field(default_factory=list, description="Generated artifacts")
+    error_message: str | None = Field(None, description="Error message if failed")
 
     class Config:
         """Pydantic config."""
@@ -107,8 +106,8 @@ class RenderedRule(BaseModel):
 
     rule_id: str = Field(..., description="Rule identifier")
     product: str = Field(..., description="Product this rule was built for")
-    rendered_yaml: Optional[str] = Field(None, description="Fully rendered YAML content")
-    rendered_oval: Optional[str] = Field(None, description="Rendered OVAL check content")
+    rendered_yaml: str | None = Field(None, description="Fully rendered YAML content")
+    rendered_oval: str | None = Field(None, description="Rendered OVAL check content")
     rendered_remediations: dict[str, str] = Field(
         default_factory=dict,
         description="Rendered remediation scripts by type (bash, ansible, etc.)",
@@ -138,7 +137,7 @@ class DatastreamInfo(BaseModel):
     product: str = Field(..., description="Product identifier")
     datastream_path: str = Field(..., description="Path to datastream file")
     file_size: int = Field(..., description="Datastream file size in bytes")
-    build_time: Optional[datetime] = Field(None, description="When the datastream was built")
+    build_time: datetime | None = Field(None, description="When the datastream was built")
     profiles_count: int = Field(default=0, description="Number of profiles in the datastream")
     rules_count: int = Field(default=0, description="Number of rules in the datastream")
     exists: bool = Field(..., description="Whether the datastream file exists")

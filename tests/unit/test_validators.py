@@ -1,6 +1,5 @@
 """Unit tests for rule validators."""
 
-import pytest
 
 from content_agent.core.scaffolding.validators import RuleValidator, validate_rule_yaml
 

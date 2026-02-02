@@ -1,6 +1,6 @@
 """Profile data models."""
 
-from typing import Dict, List, Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -10,9 +10,9 @@ class ProfileSummary(BaseModel):
 
     profile_id: str = Field(..., description="Profile identifier")
     title: str = Field(..., description="Profile title")
-    description: Optional[str] = Field(None, description="Profile description")
+    description: str | None = Field(None, description="Profile description")
     product: str = Field(..., description="Product this profile belongs to")
-    rule_count: Optional[int] = Field(None, description="Number of rules in profile")
+    rule_count: int | None = Field(None, description="Number of rules in profile")
 
     class Config:
         """Pydantic config."""
@@ -35,14 +35,14 @@ class ProfileDetails(BaseModel):
     title: str = Field(..., description="Profile title")
     description: str = Field(..., description="Full description")
     product: str = Field(..., description="Product identifier")
-    extends: Optional[str] = Field(None, description="Parent profile if this extends another")
-    selections: List[str] = Field(default_factory=list, description="Selected rule IDs")
-    variables: Dict[str, str] = Field(
+    extends: str | None = Field(None, description="Parent profile if this extends another")
+    selections: list[str] = Field(default_factory=list, description="Selected rule IDs")
+    variables: dict[str, str] = Field(
         default_factory=dict, description="Profile-specific variable values"
     )
     file_path: str = Field(..., description="Path to profile file")
     rule_count: int = Field(..., description="Total number of rules")
-    control_file: Optional[str] = Field(
+    control_file: str | None = Field(
         None, description="Control file if profile is based on controls"
     )
 
@@ -69,9 +69,9 @@ class TemplateSummary(BaseModel):
     """Summary information about a template."""
 
     name: str = Field(..., description="Template name")
-    description: Optional[str] = Field(None, description="Template description")
+    description: str | None = Field(None, description="Template description")
     language: str = Field(..., description="Template language (jinja2, etc.)")
-    category: Optional[str] = Field(None, description="Template category")
+    category: str | None = Field(None, description="Template category")
 
     class Config:
         """Pydantic config."""
@@ -92,9 +92,9 @@ class TemplateParameter(BaseModel):
     name: str = Field(..., description="Parameter name")
     type: str = Field(..., description="Parameter type")
     required: bool = Field(..., description="Whether parameter is required")
-    description: Optional[str] = Field(None, description="Parameter description")
-    default: Optional[str] = Field(None, description="Default value")
-    options: Optional[List[str]] = Field(
+    description: str | None = Field(None, description="Parameter description")
+    default: str | None = Field(None, description="Default value")
+    options: list[str] | None = Field(
         None, description="Valid options if parameter has enumerated values"
     )
 
@@ -103,11 +103,11 @@ class TemplateSchema(BaseModel):
     """Schema definition for a template."""
 
     name: str = Field(..., description="Template name")
-    description: Optional[str] = Field(None, description="Template description")
-    parameters: List[TemplateParameter] = Field(
+    description: str | None = Field(None, description="Template description")
+    parameters: list[TemplateParameter] = Field(
         default_factory=list, description="Template parameters"
     )
-    example_usage: Optional[Dict[str, str]] = Field(None, description="Example parameter values")
+    example_usage: dict[str, str] | None = Field(None, description="Example parameter values")
 
     class Config:
         """Pydantic config."""
@@ -143,7 +143,7 @@ class ScaffoldingResult(BaseModel):
 
     success: bool = Field(..., description="Whether operation succeeded")
     rule_id: str = Field(..., description="Rule identifier")
-    files_created: List[str] = Field(default_factory=list, description="Files that were created")
+    files_created: list[str] = Field(default_factory=list, description="Files that were created")
     rule_dir: str = Field(..., description="Path to rule directory")
     message: str = Field(..., description="Success or error message")
     validation: Optional["ValidationResult"] = Field(  # Forward reference
