@@ -710,12 +710,23 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
                 section_title = r.get("section", "default")
                 section_id = section_title.lower().replace(" ", "_").replace(":", "").replace("&", "and")
 
+                # Determine requirement text (for YAML title field)
+                # Priority: description > text > title
+                # ComplianceAsCode format requires full requirement text in title field
+                req_text = r.get("description") or r.get("text") or r.get("title") or ""
+
+                # Store short title in context if it's different from description
+                short_title = r.get("title")
+                context_note = None
+                if short_title and r.get("description") and short_title != r.get("description"):
+                    context_note = f"Short title: {short_title}"
+
                 req = ExtractedRequirement(
-                    text=r.get("description", r.get("text", "")),
+                    text=req_text,
                     section_id=section_id,
                     section_title=section_title,
                     potential_id=r.get("id", r.get("potential_id")),
-                    context=r.get("title")  # Store title in context if provided
+                    context=context_note
                 )
                 requirements.append(req)
 

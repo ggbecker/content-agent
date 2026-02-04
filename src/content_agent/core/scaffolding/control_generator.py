@@ -343,6 +343,7 @@ class ControlGenerator:
                 title=title,
                 description=req.text,
                 section=req.section_id,
+                notes=req.context,  # Add context as notes if provided
             )
 
             requirements.append(control_req)
