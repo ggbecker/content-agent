@@ -1,12 +1,12 @@
 """Build job data models."""
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
 
-class BuildJobStatus(str, Enum):
+class BuildJobStatus(StrEnum):
     """Build job status."""
 
     PENDING = "pending"
@@ -17,7 +17,7 @@ class BuildJobStatus(str, Enum):
     ERROR = "error"
 
 
-class BuildJobType(str, Enum):
+class BuildJobType(StrEnum):
     """Type of build job."""
 
     PRODUCT = "product"

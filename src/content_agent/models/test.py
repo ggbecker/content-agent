@@ -1,12 +1,12 @@
 """Test job data models."""
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
 
-class TestJobStatus(str, Enum):
+class TestJobStatus(StrEnum):
     """Test job status."""
 
     PENDING = "pending"
@@ -17,7 +17,7 @@ class TestJobStatus(str, Enum):
     ERROR = "error"
 
 
-class TestScenarioStatus(str, Enum):
+class TestScenarioStatus(StrEnum):
     """Individual test scenario status."""
 
     PASS = "pass"
