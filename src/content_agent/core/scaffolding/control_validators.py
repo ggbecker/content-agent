@@ -83,9 +83,7 @@ class ControlValidator:
                 file_path=file_path,
             )
 
-    def validate_control_structure(
-        self, control_data: dict
-    ) -> ControlValidationResult:
+    def validate_control_structure(self, control_data: dict) -> ControlValidationResult:
         """Validate control file schema.
 
         Args:
@@ -217,9 +215,7 @@ class ControlValidator:
             warnings=warnings,
         )
 
-    def validate_control_directory(
-        self, control_dir: Path
-    ) -> ControlValidationResult:
+    def validate_control_directory(self, control_dir: Path) -> ControlValidationResult:
         """Validate all control files in a directory.
 
         Args:
@@ -239,9 +235,7 @@ class ControlValidator:
             )
 
         # Find all YAML files
-        yaml_files = list(control_dir.glob("**/*.yml")) + list(
-            control_dir.glob("**/*.yaml")
-        )
+        yaml_files = list(control_dir.glob("**/*.yml")) + list(control_dir.glob("**/*.yaml"))
 
         if not yaml_files:
             warnings.append(f"No control files found in {control_dir}")

@@ -1,11 +1,9 @@
 """Tests for control file generator."""
 
-import pytest
-from pathlib import Path
 from content_agent.core.scaffolding.control_generator import ControlGenerator
 from content_agent.models.control import (
-    ExtractedRequirement,
     ControlRequirement,
+    ExtractedRequirement,
 )
 
 
@@ -19,7 +17,7 @@ def test_control_generator_init():
 def test_generate_requirement_file(tmp_path):
     """Test generating individual requirement file."""
     # Create generator with mock content_repo
-    from content_agent.core.scaffolding.control_generator import ControlGenerator
+
     generator = ControlGenerator.__new__(ControlGenerator)  # Skip __init__
 
     req = ControlRequirement(
@@ -55,7 +53,7 @@ def test_generate_requirement_file(tmp_path):
 
 def test_generate_parent_control_file(tmp_path):
     """Test generating parent control file."""
-    from content_agent.core.scaffolding.control_generator import ControlGenerator
+
     generator = ControlGenerator.__new__(ControlGenerator)  # Skip __init__
 
     file_path = tmp_path / "test_policy.yml"
@@ -89,7 +87,7 @@ def test_generate_parent_control_file(tmp_path):
 
 def test_convert_to_control_requirements():
     """Test converting ExtractedRequirement to ControlRequirement."""
-    from content_agent.core.scaffolding.control_generator import ControlGenerator
+
     generator = ControlGenerator.__new__(ControlGenerator)  # Skip __init__
 
     extracted = [
@@ -115,7 +113,7 @@ def test_convert_to_control_requirements():
 
 def test_group_by_section():
     """Test grouping requirements by section."""
-    from content_agent.core.scaffolding.control_generator import ControlGenerator
+
     generator = ControlGenerator.__new__(ControlGenerator)  # Skip __init__
 
     reqs = [
@@ -148,7 +146,7 @@ def test_group_by_section():
 
 def test_clean_section_id():
     """Test section ID cleaning."""
-    from content_agent.core.scaffolding.control_generator import ControlGenerator
+
     generator = ControlGenerator.__new__(ControlGenerator)  # Skip __init__
 
     # Test normal section ID
@@ -167,7 +165,7 @@ def test_clean_section_id():
 
 def test_generate_filename():
     """Test filename generation."""
-    from content_agent.core.scaffolding.control_generator import ControlGenerator
+
     generator = ControlGenerator.__new__(ControlGenerator)  # Skip __init__
 
     # Test with clear requirement ID

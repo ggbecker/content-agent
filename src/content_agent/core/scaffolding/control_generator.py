@@ -7,7 +7,6 @@ import yaml
 
 from content_agent.core.integration import get_content_repository
 from content_agent.models.control import (
-    ControlFile,
     ControlGenerationResult,
     ControlRequirement,
     ExtractedRequirement,
@@ -19,14 +18,15 @@ logger = logging.getLogger(__name__)
 # Custom YAML representer for better multi-line string formatting
 class folded_str(str):
     """String subclass that will be represented as folded scalar in YAML."""
+
     pass
 
 
 def folded_str_representer(dumper, data):
     """Represent folded_str as folded scalar (>)."""
-    if '\n' in data or len(data) > 80:
-        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='>')
-    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+    if "\n" in data or len(data) > 80:
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data, style=">")
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data)
 
 
 # Register the custom representer
@@ -172,9 +172,7 @@ class ControlGenerator:
                 warnings=[],
             )
 
-    def generate_requirement_file(
-        self, requirement: ControlRequirement, file_path: Path
-    ) -> bool:
+    def generate_requirement_file(self, requirement: ControlRequirement, file_path: Path) -> bool:
         """Generate individual requirement control file in ComplianceAsCode format.
 
         Args:
@@ -217,9 +215,7 @@ class ControlGenerator:
                 control_item["notes"] = folded_str(requirement.notes)
 
             # Wrap in controls list (ComplianceAsCode format)
-            content = {
-                "controls": [control_item]
-            }
+            content = {"controls": [control_item]}
 
             # Write YAML file with proper formatting
             with open(file_path, "w") as f:

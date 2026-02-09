@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Literal, Optional
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -44,7 +44,7 @@ class ControlRequirement(BaseModel):
         default_factory=dict,
         description="External references (NIST, CIS, etc.)",
     )
-    notes: Optional[str] = Field(
+    notes: str | None = Field(
         default=None,
         description="Additional notes or comments",
     )
@@ -52,7 +52,7 @@ class ControlRequirement(BaseModel):
         default_factory=list,
         description="Compliance levels (e.g., ['low', 'medium', 'high'])",
     )
-    section: Optional[str] = Field(
+    section: str | None = Field(
         default=None,
         description="Section identifier this requirement belongs to",
     )
@@ -62,15 +62,15 @@ class ControlLevel(BaseModel):
     """Compliance level definition (e.g., Level 1, Level 2)."""
 
     id: str = Field(..., description="Level identifier (e.g., 'high', 'medium', 'low')")
-    title: Optional[str] = Field(
+    title: str | None = Field(
         default=None,
         description="Level title",
     )
-    description: Optional[str] = Field(
+    description: str | None = Field(
         default=None,
         description="Level description",
     )
-    inherits_from: Optional[str] = Field(
+    inherits_from: str | None = Field(
         default=None,
         description="Parent level ID this level inherits from",
     )
@@ -87,29 +87,29 @@ class ControlFile(BaseModel):
     title: str = Field(..., description="Policy/framework name")
 
     # ComplianceAsCode format fields
-    policy: Optional[str] = Field(
+    policy: str | None = Field(
         default=None,
         description="Policy name (same as title in CAC format)",
     )
-    version: Optional[str] = Field(
+    version: str | None = Field(
         default=None,
         description="Version string (e.g., 'v3r1')",
     )
-    source: Optional[str] = Field(
+    source: str | None = Field(
         default=None,
         description="Source URL (CAC format)",
     )
-    controls_dir: Optional[str] = Field(
+    controls_dir: str | None = Field(
         default=None,
         description="Directory containing individual control files (CAC format)",
     )
 
     # Legacy format fields (optional for backward compatibility)
-    description: Optional[str] = Field(
+    description: str | None = Field(
         default=None,
         description="Policy description",
     )
-    source_document: Optional[str] = Field(
+    source_document: str | None = Field(
         default=None,
         description="Source file path or URL (legacy format)",
     )
@@ -123,7 +123,7 @@ class ControlFile(BaseModel):
         default_factory=list,
         description="List of control requirements",
     )
-    levels: Optional[list[ControlLevel]] = Field(
+    levels: list[ControlLevel] | None = Field(
         default=None,
         description="Compliance levels if applicable",
     )
@@ -144,7 +144,7 @@ class DocumentSection(BaseModel):
         default_factory=list,
         description="Nested subsections",
     )
-    parent_id: Optional[str] = Field(
+    parent_id: str | None = Field(
         default=None,
         description="Parent section ID if nested",
     )
@@ -156,11 +156,11 @@ class ExtractedRequirement(BaseModel):
     text: str = Field(..., description="Exact requirement text from document")
     section_id: str = Field(..., description="Section this requirement belongs to")
     section_title: str = Field(..., description="Section title")
-    potential_id: Optional[str] = Field(
+    potential_id: str | None = Field(
         default=None,
         description="Potential requirement ID if detected",
     )
-    context: Optional[str] = Field(
+    context: str | None = Field(
         default=None,
         description="Surrounding context or notes",
     )
@@ -182,7 +182,7 @@ class ParsedDocument(BaseModel):
         default_factory=dict,
         description="Document metadata (author, date, version, etc.)",
     )
-    source_path: Optional[str] = Field(
+    source_path: str | None = Field(
         default=None,
         description="Source file path or URL",
     )
@@ -257,7 +257,7 @@ class ControlValidationResult(BaseModel):
         default_factory=list,
         description="Validation warnings",
     )
-    file_path: Optional[Path] = Field(
+    file_path: Path | None = Field(
         default=None,
         description="Path to validated file",
     )

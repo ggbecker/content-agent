@@ -7,7 +7,6 @@ from content_agent.core.ai.rule_mapper import RuleMapper
 from content_agent.core.discovery.controls import ControlDiscovery
 from content_agent.core.scaffolding.control_validators import ControlValidator
 from content_agent.models.control import (
-    ControlFile,
     ControlReviewReport,
     ControlValidationResult,
     RuleSuggestion,
@@ -72,9 +71,7 @@ class MappingReviewer:
             validation_result = self.validator.validate_control_file(control_file_path)
 
             # Count requirements with/without rules
-            requirements_with_rules = sum(
-                1 for req in control.controls if req.rules
-            )
+            requirements_with_rules = sum(1 for req in control.controls if req.rules)
             requirements_without_rules = len(control.controls) - requirements_with_rules
 
             # Generate AI suggestions if requested and mapper available
@@ -87,25 +84,19 @@ class MappingReviewer:
                             if suggestions:
                                 rule_suggestions[req.id] = suggestions
                         except Exception as e:
-                            logger.warning(
-                                f"Failed to generate suggestions for {req.id}: {e}"
-                            )
+                            logger.warning(f"Failed to generate suggestions for {req.id}: {e}")
 
             # Identify issues
             issues = []
 
             # Check for requirements without rules
             if requirements_without_rules > 0:
-                issues.append(
-                    f"{requirements_without_rules} requirements have no mapped rules"
-                )
+                issues.append(f"{requirements_without_rules} requirements have no mapped rules")
 
             # Check for low-confidence suggestions
             for req_id, suggestions in rule_suggestions.items():
                 if suggestions and all(s.confidence < 0.5 for s in suggestions):
-                    issues.append(
-                        f"Requirement {req_id} has only low-confidence rule suggestions"
-                    )
+                    issues.append(f"Requirement {req_id} has only low-confidence rule suggestions")
 
             # Add validation errors as issues
             issues.extend(validation_result.errors)
@@ -197,7 +188,11 @@ class MappingReviewer:
             f"- Total requirements: {report.total_requirements}",
             f"- Requirements with rules: {report.requirements_with_rules}",
             f"- Requirements without rules: {report.requirements_without_rules}",
-            f"- Coverage: {report.requirements_with_rules / report.total_requirements * 100:.1f}%" if report.total_requirements > 0 else "- Coverage: 0%",
+            (
+                f"- Coverage: {report.requirements_with_rules / report.total_requirements * 100:.1f}%"
+                if report.total_requirements > 0
+                else "- Coverage: 0%"
+            ),
             "",
         ]
 

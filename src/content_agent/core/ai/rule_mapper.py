@@ -1,6 +1,5 @@
 """AI-powered rule mapping for control requirements."""
 
-import json
 from pathlib import Path
 
 from content_agent.core.ai.claude_client import ClaudeClient
@@ -158,17 +157,17 @@ Be conservative - only suggest rules with confidence >= 0.3. Limit to top 10 mos
                 context_parts.append(f"  Title: {rule.title}")
             if rule.description:
                 # Truncate long descriptions
-                desc = rule.description[:200] + "..." if len(
-                    rule.description
-                ) > 200 else rule.description
+                desc = (
+                    rule.description[:200] + "..."
+                    if len(rule.description) > 200
+                    else rule.description
+                )
                 context_parts.append(f"  Description: {desc}")
             context_parts.append("")
 
         return "\n".join(context_parts)
 
-    def _build_mapping_prompt(
-        self, requirement: ControlRequirement, rules_context: str
-    ) -> str:
+    def _build_mapping_prompt(self, requirement: ControlRequirement, rules_context: str) -> str:
         """Build prompt for rule mapping.
 
         Args:

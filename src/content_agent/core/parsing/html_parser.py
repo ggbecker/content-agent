@@ -75,12 +75,14 @@ class HTMLParser(BaseParser):
                     if h1:
                         title = h1.get_text().strip()
                     else:
-                        title = Path(source_path).stem if not source_str.startswith(
-                            "http"
-                        ) else "Document"
+                        title = (
+                            Path(source_path).stem
+                            if not source_str.startswith("http")
+                            else "Document"
+                        )
 
             # Extract text and parse sections
-            text = self.extract_text(source)
+            self.extract_text(source)
             sections = self._parse_sections_from_soup(soup)
 
             return ParsedDocument(

@@ -72,9 +72,7 @@ class TextComparator:
         for orig_word, reword in rewording_indicators:
             if orig_word in original.lower() and reword in extracted.lower():
                 if orig_word not in extracted.lower():
-                    issues.append(
-                        f"Possible rewording detected: '{orig_word}' -> '{reword}'"
-                    )
+                    issues.append(f"Possible rewording detected: '{orig_word}' -> '{reword}'")
 
         return {
             "exact_match": exact_match,

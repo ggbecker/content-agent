@@ -1,15 +1,14 @@
 """Integration tests for control file generation workflow using real policy document."""
 
-import pytest
-from pathlib import Path
 import tempfile
-import shutil
+from pathlib import Path
+
+import pytest
 
 from content_agent.core.parsing import PDFParser
 from content_agent.core.scaffolding.control_generator import ControlGenerator
 from content_agent.core.scaffolding.control_validators import ControlValidator
 from content_agent.models.control import ExtractedRequirement
-
 
 # Path to test fixtures
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
@@ -213,23 +212,24 @@ class TestControlWorkflowWithoutAI:
     def test_manual_requirement_extraction(self):
         """Test manually creating requirements from parsed document."""
         parser = PDFParser()
-        doc = parser.parse(ITSAR_PDF)
+        parser.parse(ITSAR_PDF)
 
         # Extract text to find requirements
         text = parser.extract_text(ITSAR_PDF)
-        lines = text.split('\n')
+        lines = text.split("\n")
 
         # Look for numbered items that look like requirements
         import re
+
         requirements = []
 
         for i, line in enumerate(lines):
             line = line.strip()
             # Look for patterns like "2.11.1. Something"
-            match = re.match(r'^([\d\.]+)\.\s+(.+)', line)
+            match = re.match(r"^([\d\.]+)\.\s+(.+)", line)
             if match and len(line) < 200:  # Likely a requirement title
                 req_id = match.group(1)
-                title = match.group(2).strip('.')
+                title = match.group(2).strip(".")
 
                 # Try to get description from following lines
                 description_lines = []
@@ -237,16 +237,18 @@ class TestControlWorkflowWithoutAI:
                     next_line = lines[j].strip()
                     if not next_line:
                         continue
-                    if re.match(r'^[\d\.]+\.', next_line):  # Next requirement
+                    if re.match(r"^[\d\.]+\.", next_line):  # Next requirement
                         break
                     description_lines.append(next_line)
 
                 if description_lines:
-                    requirements.append({
-                        "id": f"ITSAR-{req_id}",
-                        "title": title,
-                        "description": " ".join(description_lines[:3]),  # First 3 lines
-                    })
+                    requirements.append(
+                        {
+                            "id": f"ITSAR-{req_id}",
+                            "title": title,
+                            "description": " ".join(description_lines[:3]),  # First 3 lines
+                        }
+                    )
 
         # Should find multiple requirements
         assert len(requirements) > 10
@@ -320,6 +322,7 @@ class TestControlWorkflowWithoutAI:
 
             # Step 6: Verify content preservation
             import yaml
+
             for req_file in req_files:
                 with open(req_file) as f:
                     data = yaml.safe_load(f)

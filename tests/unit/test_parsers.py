@@ -1,12 +1,12 @@
 """Tests for document parsers."""
 
 import pytest
-from pathlib import Path
+
 from content_agent.core.parsing import (
     BaseParser,
-    TextParser,
     MarkdownParser,
     ParsingError,
+    TextParser,
 )
 
 
@@ -14,16 +14,14 @@ def test_text_parser_basic(tmp_path):
     """Test basic text parsing."""
     # Create test file
     test_file = tmp_path / "test.txt"
-    test_file.write_text(
-        """Test Document
+    test_file.write_text("""Test Document
 
 Section 1
 This is section 1 content.
 
 Section 2
 This is section 2 content.
-"""
-    )
+""")
 
     parser = TextParser()
     doc = parser.parse(test_file)
@@ -56,16 +54,14 @@ def test_text_parser_nonexistent_file():
 def test_markdown_parser_basic(tmp_path):
     """Test basic markdown parsing."""
     test_file = tmp_path / "test.md"
-    test_file.write_text(
-        """# Test Document
+    test_file.write_text("""# Test Document
 
 ## Section 1
 This is section 1 content.
 
 ## Section 2
 This is section 2 content.
-"""
-    )
+""")
 
     parser = MarkdownParser()
     doc = parser.parse(test_file)
@@ -80,8 +76,7 @@ This is section 2 content.
 def test_markdown_parser_with_frontmatter(tmp_path):
     """Test markdown with YAML frontmatter."""
     test_file = tmp_path / "test.md"
-    test_file.write_text(
-        """---
+    test_file.write_text("""---
 title: My Document
 author: Test Author
 ---
@@ -89,8 +84,7 @@ author: Test Author
 # Heading
 
 Content here.
-"""
-    )
+""")
 
     parser = MarkdownParser()
     doc = parser.parse(test_file)
@@ -112,7 +106,11 @@ def test_base_parser_section_hierarchy():
     parser = TestParser()
 
     # Test flat sections
-    flat = [(1, "Title 1", "Content 1"), (2, "Title 1.1", "Content 1.1"), (1, "Title 2", "Content 2")]
+    flat = [
+        (1, "Title 1", "Content 1"),
+        (2, "Title 1.1", "Content 1.1"),
+        (1, "Title 2", "Content 2"),
+    ]
 
     hierarchy = parser._create_section_hierarchy(flat)
 

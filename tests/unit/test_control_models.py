@@ -1,17 +1,17 @@
 """Tests for control data models."""
 
 import pytest
-from datetime import datetime
+from pydantic import ValidationError
 
 from content_agent.models.control import (
-    ControlRequirement,
     ControlFile,
-    ParsedDocument,
-    RuleSuggestion,
+    ControlGenerationResult,
+    ControlRequirement,
+    ControlValidationResult,
     DocumentSection,
     ExtractedRequirement,
-    ControlGenerationResult,
-    ControlValidationResult,
+    ParsedDocument,
+    RuleSuggestion,
 )
 
 
@@ -142,7 +142,7 @@ def test_rule_suggestion_confidence_validation():
     assert suggestion.confidence == 0.5
 
     # Invalid confidence should raise validation error
-    with pytest.raises(Exception):  # Pydantic validation error
+    with pytest.raises(ValidationError):
         RuleSuggestion(
             rule_id="test_rule",
             confidence=1.5,  # > 1.0

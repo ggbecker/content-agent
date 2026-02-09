@@ -342,7 +342,7 @@ TOOLS = [
                 },
                 "requirements_json": {
                     "type": "string",
-                    "description": "JSON string of extracted requirements. Format: {\"requirements\": [{\"id\": \"...\", \"title\": \"...\", \"description\": \"...\", \"section\": \"...\"}]} or just the array",
+                    "description": 'JSON string of extracted requirements. Format: {"requirements": [{"id": "...", "title": "...", "description": "...", "section": "..."}]} or just the array',
                 },
                 "version": {
                     "type": "string",
@@ -648,11 +648,12 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
         # Control file tools
         elif name == "parse_policy_document":
             from pathlib import Path
+
             from content_agent.core.parsing import (
-                PDFParser,
-                MarkdownParser,
-                TextParser,
                 HTMLParser,
+                MarkdownParser,
+                PDFParser,
+                TextParser,
             )
 
             source = arguments["source"]
@@ -681,6 +682,7 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
 
         elif name == "generate_control_files":
             from pathlib import Path
+
             from content_agent.core.scaffolding.control_generator import ControlGenerator
             from content_agent.models.control import ExtractedRequirement
 
@@ -701,14 +703,21 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
             elif isinstance(requirements_data, list):
                 reqs_list = requirements_data
             else:
-                return [{"type": "text", "text": "Invalid requirements format. Expected list or object with 'requirements' key."}]
+                return [
+                    {
+                        "type": "text",
+                        "text": "Invalid requirements format. Expected list or object with 'requirements' key.",
+                    }
+                ]
 
             # Map fields to ExtractedRequirement format
             requirements = []
             for r in reqs_list:
                 # Map fields: description->text, id->potential_id, section->section_title
                 section_title = r.get("section", "default")
-                section_id = section_title.lower().replace(" ", "_").replace(":", "").replace("&", "and")
+                section_id = (
+                    section_title.lower().replace(" ", "_").replace(":", "").replace("&", "and")
+                )
 
                 # Determine requirement text (for YAML title field)
                 # Priority: description > text > title
@@ -726,7 +735,7 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
                     section_id=section_id,
                     section_title=section_title,
                     potential_id=r.get("id", r.get("potential_id")),
-                    context=context_note
+                    context=context_note,
                 )
                 requirements.append(req)
 
@@ -748,7 +757,12 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
             summary += f"Files created: {len(result.requirement_files)}\n"
             summary += f"Parent file: {result.parent_file_path}\n\n"
 
-            return [{"type": "text", "text": summary + json.dumps(result.model_dump(mode="json"), indent=2)}]
+            return [
+                {
+                    "type": "text",
+                    "text": summary + json.dumps(result.model_dump(mode="json"), indent=2),
+                }
+            ]
 
         elif name == "suggest_rule_mappings":
             from content_agent.config.settings import get_settings
@@ -792,6 +806,7 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
 
         elif name == "validate_control_file":
             from pathlib import Path
+
             from content_agent.core.scaffolding.control_validators import (
                 ControlValidator,
             )
@@ -804,10 +819,16 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
             summary += f"Errors: {len(result.errors)}\n"
             summary += f"Warnings: {len(result.warnings)}\n\n"
 
-            return [{"type": "text", "text": summary + json.dumps(result.model_dump(mode="json"), indent=2)}]
+            return [
+                {
+                    "type": "text",
+                    "text": summary + json.dumps(result.model_dump(mode="json"), indent=2),
+                }
+            ]
 
         elif name == "review_control_generation":
             from pathlib import Path
+
             from content_agent.config.settings import get_settings
             from content_agent.core.ai.claude_client import ClaudeClient
             from content_agent.core.ai.rule_mapper import RuleMapper
@@ -859,7 +880,12 @@ async def handle_tool_call(name: str, arguments: dict[str, Any]) -> list[Any]:
             summary = f"Control framework: {control.title}\n"
             summary += f"Requirements: {len(control.controls)}\n\n"
 
-            return [{"type": "text", "text": summary + json.dumps(control.model_dump(mode="json"), indent=2)}]
+            return [
+                {
+                    "type": "text",
+                    "text": summary + json.dumps(control.model_dump(mode="json"), indent=2),
+                }
+            ]
 
         elif name == "search_control_requirements":
             from content_agent.core.discovery.controls import search_controls

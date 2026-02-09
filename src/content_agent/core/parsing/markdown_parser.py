@@ -7,14 +7,6 @@ from typing import Any
 from content_agent.core.parsing.base_parser import BaseParser, ParsingError
 from content_agent.models.control import ParsedDocument
 
-try:
-    import markdown
-    from markdown.extensions.meta import MetaExtension
-
-    MARKDOWN_AVAILABLE = True
-except ImportError:
-    MARKDOWN_AVAILABLE = False
-
 
 class MarkdownParser(BaseParser):
     """Parser for Markdown documents."""
@@ -22,11 +14,6 @@ class MarkdownParser(BaseParser):
     def __init__(self):
         """Initialize Markdown parser."""
         super().__init__()
-        if not MARKDOWN_AVAILABLE:
-            raise ParsingError(
-                "Markdown parsing dependencies not installed. "
-                "Install with: pip install markdown"
-            )
 
     def parse(self, source: str | Path) -> ParsedDocument:
         """Parse a Markdown document.

@@ -119,9 +119,7 @@ class ControlDiscovery:
             controls_to_search = [control] if control else []
         else:
             control_ids = self.list_controls()
-            controls_to_search = [
-                self.get_control_details(cid) for cid in control_ids
-            ]
+            controls_to_search = [self.get_control_details(cid) for cid in control_ids]
             controls_to_search = [c for c in controls_to_search if c is not None]
 
         # Search through controls

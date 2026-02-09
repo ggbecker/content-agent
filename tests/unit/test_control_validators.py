@@ -1,7 +1,8 @@
 """Tests for control validators."""
 
-import pytest
 from pathlib import Path
+
+import pytest
 import yaml
 
 from content_agent.core.scaffolding.control_validators import ControlValidator
